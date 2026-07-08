@@ -1,0 +1,142 @@
+/* ============================================================
+   enhance.css — shared polish layer (cursor, magnetic, transitions)
+   Loaded AFTER each page's own <style> so it can refine on top.
+   ============================================================ */
+
+/* ============================================================
+   LIGHT MODE — variable flip + targeted overrides
+   ============================================================ */
+html[data-theme="light"]{
+  --ink:#221c38;
+  --ink-dim:rgba(34,28,56,.66);
+  --gold:#a06f1d;
+  --rose:#b34a38;
+  --mist:#3f6076;
+  --bg:#f2ede2;
+  --panel:rgba(34,28,56,.045);
+  --line:rgba(34,28,56,.16);
+}
+html[data-theme="light"] body{background:var(--bg);}
+
+/* soft daylight aura on case-study pages */
+html[data-theme="light"] .aura{
+  background:
+    radial-gradient(60% 50% at 20% -5%,rgba(178,150,220,.30),transparent 60%),
+    radial-gradient(50% 45% at 92% 4%,rgba(240,196,120,.26),transparent 55%),
+    radial-gradient(70% 60% at 50% 108%,rgba(150,180,210,.28),transparent 60%),
+    linear-gradient(180deg,#f7f2e7 0%,#f2ede2 45%,#ece6d8 100%) !important;
+}
+html[data-theme="light"] .grain{opacity:.22;}
+html[data-theme="light"] .vignette{
+  background:radial-gradient(120% 90% at 50% 42%,transparent 50%,rgba(120,110,90,.16) 100%);}
+html[data-theme="light"] .scrim{
+  background:linear-gradient(180deg,rgba(244,240,230,.4) 0%,transparent 28%,transparent 70%,rgba(244,240,230,.5) 100%);}
+
+/* hard-coded dark surfaces → paper */
+html[data-theme="light"] .triad>div,
+html[data-theme="light"] .reflect>div,
+html[data-theme="light"] .exp{background:#faf6ec;}
+html[data-theme="light"] .browser{background:#faf6ec;}
+html[data-theme="light"] .browser .topbar{background:#e7e0d0;border-bottom-color:var(--line);}
+html[data-theme="light"] .browser .topbar i{background:#c9c0aa;}
+html[data-theme="light"] figure img{background:#faf6ec;}
+html[data-theme="light"] .shot{box-shadow:0 24px 60px rgba(90,80,60,.25);}
+html[data-theme="light"] .iter::before{box-shadow:0 0 0 4px var(--bg);}
+html[data-theme="light"] .verdict.chosen,
+html[data-theme="light"] .pill.p0,
+html[data-theme="light"] .chip.status,
+html[data-theme="light"] .ftags .shipped{color:#fff;}
+html[data-theme="light"] .cta{box-shadow:0 10px 34px rgba(160,111,29,.25);}
+
+/* home page: portfolio reading layer + marquee + station halo */
+html[data-theme="light"] .portfolio{
+  background:linear-gradient(180deg,transparent 0%,rgba(244,240,230,.82) 12%,rgba(243,238,228,.94) 30%,rgba(242,237,226,.97) 100%);
+  border-top-color:var(--line);}
+html[data-theme="light"] .marquee{background:rgba(244,240,230,.55);border-block-color:var(--line);}
+html[data-theme="light"] .station .inner::before{
+  background:radial-gradient(80% 75% at 0% 50%,rgba(246,242,232,.62),rgba(246,242,232,.3) 45%,transparent 72%);}
+html[data-theme="light"] .station.center .inner::before{
+  background:radial-gradient(70% 75% at 50% 50%,rgba(246,242,232,.62),rgba(246,242,232,.26) 50%,transparent 74%);}
+html[data-theme="light"] .station.right .inner::before{
+  background:radial-gradient(80% 75% at 100% 50%,rgba(246,242,232,.62),rgba(246,242,232,.3) 45%,transparent 72%);}
+html[data-theme="light"] .station .lede{color:rgba(34,28,56,.88);text-shadow:0 2px 22px rgba(246,242,232,.7);}
+html[data-theme="light"] h1.hero,
+html[data-theme="light"] .station h2{text-shadow:0 10px 50px rgba(246,242,232,.5);}
+html[data-theme="light"] .cta{color:#f6f2e8;background:#221c38;}
+html[data-theme="light"] .cta.ghost{color:var(--ink);background:transparent;border-color:rgba(34,28,56,.4);}
+
+/* difference-blend chrome fails over pale skies — use solid ink in light mode */
+html[data-theme="light"] nav,
+html[data-theme="light"] .rail,
+html[data-theme="light"] .scroll-hint{mix-blend-mode:normal;}
+html[data-theme="light"] nav a,
+html[data-theme="light"] .brand{color:var(--ink);}
+html[data-theme="light"] .nav-enter{border-color:var(--ink);}
+html[data-theme="light"] .nav-enter:hover{background:var(--ink);color:#f6f2e8;}
+html[data-theme="light"] .rail button{border-color:var(--ink);}
+html[data-theme="light"] .rail button.on{background:var(--ink);}
+html[data-theme="light"] .scroll-hint{color:var(--ink-dim);}
+html[data-theme="light"] .scroll-hint .line{background:linear-gradient(var(--ink),transparent);}
+html[data-theme="light"] .scroll-hint .line::after{background:var(--ink);}
+
+/* theme toggle button */
+.theme-toggle{position:fixed;bottom:26px;right:26px;z-index:9000;width:46px;height:46px;border-radius:50%;
+  border:1px solid rgba(244,236,223,.35);background:rgba(10,10,20,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  color:#f4ecdf;font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:transform .35s cubic-bezier(.16,.8,.26,1),background .4s,color .4s,border-color .4s;}
+.theme-toggle:hover{transform:scale(1.12);}
+html[data-theme="light"] .theme-toggle{border-color:rgba(34,28,56,.3);background:rgba(246,242,232,.7);color:#221c38;}
+@media(max-width:720px){.theme-toggle{bottom:18px;right:18px;}}
+
+/* smooth cross-fade when switching */
+html.theme-anim body,
+html.theme-anim .aura,
+html.theme-anim .portfolio,
+html.theme-anim .triad>div,
+html.theme-anim .reflect>div{transition:background 0.7s ease,background-color .7s ease;}
+html.theme-anim *{transition-property:color,background-color,border-color,background;transition-duration:.5s;}
+
+/* ---------- custom cursor (desktop pointers only) ---------- */
+@media (hover:hover) and (pointer:fine){
+  html.cur-on, html.cur-on *{ cursor:none !important; }
+  .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;z-index:100000;pointer-events:none;
+    border-radius:50%;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+  .cursor-dot{width:6px;height:6px;background:#fff;}
+  .cursor-ring{width:34px;height:34px;border:1px solid rgba(255,255,255,.6);
+    transition:width .32s cubic-bezier(.16,.8,.26,1),height .32s cubic-bezier(.16,.8,.26,1),
+      border-color .3s,background .3s,opacity .3s;}
+  .cursor-ring.hover{width:60px;height:60px;border-color:#fff;background:rgba(255,255,255,.06);}
+  .cursor-ring.down{width:24px;height:24px;}
+  .cursor-ring.hidden,.cursor-dot.hidden{opacity:0;}
+}
+@media (hover:none),(pointer:coarse){ .cursor-dot,.cursor-ring{display:none;} }
+
+/* ---------- page transition curtain ---------- */
+.page-fade{position:fixed;inset:0;z-index:99998;pointer-events:none;
+  background:#07060f;opacity:0;transition:opacity .55s cubic-bezier(.7,0,.3,1);}
+.page-fade.show{opacity:1;pointer-events:all;}
+.page-fade .pf-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;letter-spacing:.5em;text-indent:.5em;font-size:26px;
+  color:#f4ecdf;opacity:0;transform:translateY(10px);transition:opacity .5s ease .1s,transform .6s ease .1s;}
+.page-fade.show .pf-mark{opacity:.9;transform:none;}
+
+/* ---------- magnetic elements get a smooth spring feel ---------- */
+[data-magnetic]{will-change:transform;transition:transform .35s cubic-bezier(.16,.8,.26,1);}
+
+/* ---------- refined reveals (no blur — filters on large sections jank scroll) ---------- */
+.rv{transition:opacity .8s ease,transform .9s cubic-bezier(.16,.8,.26,1);}
+.reveal{transition:opacity .9s ease,transform 1s cubic-bezier(.16,.8,.26,1);}
+
+/* Lenis handles smoothing — native smooth-scroll must not fight it */
+html.lenis,html.lenis body{scroll-behavior:auto !important;}
+
+/* ---------- accessible focus rings (keyboard only) ---------- */
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold,#f3c987);outline-offset:3px;border-radius:4px;}
+
+/* ---------- honour reduced-motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto !important;}
+  .rv,.reveal{filter:none !important;transition:opacity .4s ease !important;}
+  .cursor-dot,.cursor-ring{display:none !important;}
+  html.cur-on,html.cur-on *{cursor:auto !important;}
+}

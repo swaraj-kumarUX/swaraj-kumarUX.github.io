@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>revMax Self-Serve on redPro — Swaraj Kumar</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');}catch(e){document.documentElement.dataset.theme='dark';}</script>
+<meta name="description" content="Turning a five-click, analyst-dependent fare tool into a one-screen self-serve experience for bus operators. Case study by Swaraj Kumar." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#f4ecdf; --ink-dim:rgba(244,236,223,.62); --gold:#f3c987;
+    --rose:#e89b8c; --mist:#bcd5e6; --bg:#0a0a14; --panel:rgba(255,255,255,.035);
+    --line:rgba(244,236,223,.12); --maxw:920px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden;}
+
+  .aura{position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background:
+      radial-gradient(60% 50% at 80% -5%,rgba(74,120,160,.4),transparent 60%),
+      radial-gradient(50% 45% at 8% 4%,rgba(243,201,135,.2),transparent 55%),
+      radial-gradient(70% 60% at 50% 108%,rgba(34,30,66,.6),transparent 60%),
+      linear-gradient(180deg,#0b1024 0%,#0a0a14 42%,#08070f 100%);}
+  .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;mix-blend-mode:overlay;opacity:.4;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");}
+
+  .bar{position:fixed;top:0;left:0;height:2px;width:0;z-index:40;background:linear-gradient(90deg,var(--rose),var(--gold));}
+  nav{position:fixed;top:0;left:0;width:100%;z-index:30;display:flex;align-items:center;justify-content:space-between;
+    padding:22px clamp(20px,5vw,60px);mix-blend-mode:difference;}
+  nav a{color:var(--ink);text-decoration:none;}
+  .back{display:inline-flex;align-items:center;gap:10px;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.9;}
+  .back:hover{opacity:1;}
+  .brand{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.4em;text-indent:.4em;}
+
+  section{padding:clamp(56px,9vh,110px) clamp(22px,6vw,60px);}
+  .wrap{max-width:var(--maxw);margin:0 auto;}
+  .wide{max-width:1180px;margin:0 auto;}
+  .eyebrow{display:inline-flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.34em;
+    text-transform:uppercase;color:var(--gold);margin-bottom:26px;}
+  .eyebrow::before{content:"";width:30px;height:1px;background:var(--gold);opacity:.7;}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:300;line-height:.98;font-size:clamp(40px,6.4vw,82px);letter-spacing:.01em;}
+  h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(30px,4.4vw,52px);line-height:1.04;}
+  h2 em{font-style:italic;color:var(--gold);}
+  h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(21px,2.4vw,27px);line-height:1.1;}
+  p{color:var(--ink-dim);font-weight:300;font-size:clamp(15px,1.4vw,17.5px);}
+  .lead{color:var(--ink);font-size:clamp(17px,1.8vw,21px);max-width:62ch;}
+  .muted{color:var(--ink-dim);} strong{color:var(--ink);font-weight:500;}
+
+  .hero{padding-top:clamp(120px,18vh,180px);}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:24px;}
+  .chip{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);
+    border:1px solid rgba(188,213,230,.3);border-radius:30px;padding:6px 13px;}
+  .chip.status{color:#0a0a14;background:var(--gold);border-color:var(--gold);font-weight:500;}
+  .subtitle{margin-top:26px;max-width:60ch;}
+  .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:48px;padding-top:30px;border-top:1px solid var(--line);}
+  @media(max-width:680px){.meta{grid-template-columns:repeat(2,1fr);gap:24px 18px;}}
+  .meta .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px;}
+  .meta .v{font-size:15px;color:var(--ink);}
+
+  figure{margin:40px 0 8px;}
+  figure img{width:100%;display:block;border-radius:16px;border:1px solid var(--line);background:#0c0b18;}
+  figcaption{margin-top:14px;font-size:12.5px;color:var(--ink-dim);letter-spacing:.02em;}
+  .shot{box-shadow:0 30px 80px rgba(0,0,0,.5);}
+
+  .triad{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:18px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  @media(max-width:760px){.triad{grid-template-columns:1fr;}}
+  .triad>div{background:#0c0b18;padding:30px 26px;}
+  .triad .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,4vw,56px);margin-top:14px;}
+  @media(max-width:760px){.cols{grid-template-columns:1fr;gap:30px;}}
+
+  /* north star callout */
+  .northstar{display:grid;grid-template-columns:auto 1fr;gap:clamp(24px,4vw,50px);align-items:center;
+    margin-top:18px;padding:clamp(30px,4vw,46px);border-radius:20px;border:1px solid rgba(243,201,135,.35);
+    background:radial-gradient(120% 140% at 0% 0%,rgba(243,201,135,.1),transparent 60%),var(--panel);}
+  @media(max-width:680px){.northstar{grid-template-columns:1fr;}}
+  .northstar .big{font-family:'Cormorant Garamond',serif;font-weight:500;line-height:.9;white-space:nowrap;}
+  .northstar .big .a{color:var(--ink-dim);font-size:clamp(34px,5vw,56px);}
+  .northstar .big .arrow{color:var(--gold);font-size:clamp(28px,4vw,46px);margin:0 8px;}
+  .northstar .big .b{color:var(--gold);font-size:clamp(46px,7vw,84px);}
+  .northstar .big .goal{display:block;font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--ink-dim);margin-top:8px;}
+  .northstar .lab{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+
+  /* compare two surfaces */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px;}
+  @media(max-width:680px){.compare{grid-template-columns:1fr;}}
+  .surface{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 26px;}
+  .surface .h{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .surface .h .name{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);}
+  .surface .h .share{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--ink);}
+  .surface ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .surface li{position:relative;padding-left:22px;font-size:14px;color:var(--ink);}
+  .surface li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold);}
+
+  ul.clean{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:12px;}
+  ul.clean li{position:relative;padding-left:26px;color:var(--ink);font-size:16px;}
+  ul.clean li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:50%;background:var(--gold);}
+
+  /* principles */
+  .principles{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:34px;}
+  @media(max-width:680px){.principles{grid-template-columns:1fr;}}
+  .principle{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;}
+  .principle .n{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);}
+  .principle h3{margin:8px 0 8px;font-size:19px;}
+  .principle p{font-size:14px;}
+
+  /* reframe */
+  .reframe{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;margin-top:18px;}
+  @media(max-width:760px){.reframe{grid-template-columns:1fr;}.reframe .arr{transform:rotate(90deg);justify-self:start;}}
+  .reframe .box{padding:26px;border-radius:16px;border:1px dashed var(--line);}
+  .reframe .box.to{border-style:solid;border-color:rgba(243,201,135,.5);background:var(--panel);}
+  .reframe .box .t{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px;}
+  .reframe .box.from .t{color:var(--ink-dim);} .reframe .box.to .t{color:var(--gold);}
+  .reframe .box p{color:var(--ink);} .reframe .arr{font-size:22px;color:var(--gold);}
+
+  /* feature decisions */
+  .decision{display:grid;grid-template-columns:1fr;gap:18px;margin-top:46px;}
+  .decision .txt .num{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);}
+  .decision .txt h3{margin:8px 0 12px;}
+  .decision .txt p{color:var(--ink);max-width:64ch;}
+
+  /* priority table */
+  .ptable{margin-top:34px;border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .prow{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:18px 24px;border-top:1px solid var(--line);}
+  .prow:first-child{border-top:none;}
+  .prow span{color:var(--ink);font-size:15px;}
+  .pill{font-size:10.5px;letter-spacing:.14em;font-weight:500;padding:5px 12px;border-radius:30px;white-space:nowrap;}
+  .pill.p0{color:#0a0a14;background:var(--gold);}
+  .pill.p1{color:var(--mist);border:1px solid var(--mist);}
+  .pill.p2{color:var(--ink-dim);border:1px solid var(--line);}
+
+  .note{margin-top:40px;padding:26px 30px;border-radius:16px;background:var(--panel);border:1px solid var(--line);}
+  .note .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+  .note p{color:var(--ink);}
+
+  /* metrics / outcomes */
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px;}
+  @media(max-width:680px){.metrics{grid-template-columns:1fr;}}
+  .metric{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:30px 26px;}
+  .metric .val{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(36px,4.6vw,52px);line-height:1;color:var(--ink);}
+  .metric .lab{margin-top:14px;font-size:14px;color:var(--ink);}
+  .metric .src{margin-top:10px;font-size:11px;color:var(--ink-dim);letter-spacing:.04em;}
+  .target-flag{display:inline-block;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(243,201,135,.4);border-radius:20px;padding:3px 9px;margin-bottom:14px;}
+
+  .reflect{display:flex;flex-direction:column;gap:1px;margin-top:18px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .reflect>div{background:#0c0b18;padding:30px 30px;}
+  .reflect .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+  .reflect p{color:var(--ink);font-size:16.5px;}
+
+  footer{padding:clamp(70px,12vh,130px) clamp(22px,6vw,60px) 80px;border-top:1px solid var(--line);text-align:center;}
+  footer h2{margin-bottom:10px;}
+  .foot-links{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-top:34px;}
+  .foot-links a{color:var(--ink-dim);text-decoration:none;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;transition:color .3s;}
+  .foot-links a:hover{color:var(--gold);}
+  .foot-meta{margin-top:40px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,236,223,.4);}
+
+  .rv{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform 1s cubic-bezier(.16,.8,.26,1);}
+  .rv.show{opacity:1;transform:none;}
+
+  /* next project */
+  .next-proj{display:block;text-decoration:none;color:var(--ink);border-top:1px solid var(--line);
+    padding:clamp(50px,9vh,100px) clamp(22px,6vw,60px);transition:background .5s ease;}
+  .next-proj:hover{background:rgba(255,255,255,.03);}
+  .next-proj .row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap;}
+  .next-proj .np-k{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+  .next-proj h2{transition:transform .5s cubic-bezier(.16,.8,.26,1);}
+  .next-proj:hover h2{transform:translateX(14px);}
+  .next-proj .np-arrow{font-size:clamp(40px,6vw,74px);color:var(--ink-dim);transition:transform .5s cubic-bezier(.16,.8,.26,1),color .4s;}
+  .next-proj:hover .np-arrow{transform:translateX(14px);color:var(--gold);}
+</style>
+<link rel="stylesheet" href="../enhance.css" />
+</head>
+<body>
+  <div class="aura"></div>
+  <div class="grain"></div>
+  <div class="bar" id="bar"></div>
+
+  <nav>
+    <a class="back" href="../index.html#work">← All work</a>
+    <a class="brand" href="../index.html">SWARAJ</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wide rv">
+      <div class="chips">
+        <span class="chip status">Shipped · P0</span>
+        <span class="chip">Product Design</span>
+        <span class="chip">Self-Serve</span>
+        <span class="chip">Data Viz</span>
+        <span class="chip">Design System</span>
+      </div>
+      <div class="eyebrow">redPro v2 · revMax · Live Nov 2024</div>
+      <h1 style="max-width:16ch;">A self-serve fare engine for bus operators</h1>
+      <p class="lead subtitle">Operators couldn't change their own fares — every update meant waiting on a pricing analyst. 80% of all pricing interventions still ran through an internal portal, one manual request at a time.</p>
+      <div class="meta">
+        <div><div class="k">Role</div><div class="v">Senior UX Designer</div></div>
+        <div><div class="k">Product</div><div class="v">redPro v2 · revMax (RPW)</div></div>
+        <div><div class="k">Platform</div><div class="v">Operator Web Portal</div></div>
+        <div><div class="k">Users</div><div class="v">Bus Operators · Pricing Analysts</div></div>
+      </div>
+      <figure>
+        <img class="shot" loading="lazy" decoding="async" src="../assets/case-studies/revmax/update-fare.png" alt="revMax fare update screen — one surface with Min-Max, Reset and Freeze fare modes, a live metric strip, route list and seat layout" />
+        <figcaption>The redesigned fare surface — three update modes, a live metric strip, route selection and seat layout, all on one screen.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section>
+    <div class="wrap rv">
+      <div class="eyebrow">Overview</div>
+      <div class="triad">
+        <div><div class="t">Problem</div><p>revMax on the operator web portal (RPW) was hard to find, took 5+ clicks and a scroll to reach the fare modal, and exposed only a fraction of what the internal ARTH portal could do. Operators leaned on analysts; only 20% of interventions happened self-serve.</p></div>
+        <div><div class="t">Approach</div><p>Mapped how operators actually intervene from intervention data, collapsed the flow onto a single fare surface, brought the metrics that drive pricing decisions next to the action, and shipped the three highest-volume operations operators previously had to ask for.</p></div>
+        <div><div class="t">Outcome</div><p>Live since end of November 2024. Self-serve interventions on RPW rose from 20% to 32% within ~1–2 months — strong momentum toward the 40% target — while freeing pricing analysts from repetitive data-entry.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NORTH STAR -->
+  <section>
+    <div class="wrap rv">
+      <div class="eyebrow">The north-star metric</div>
+      <div class="northstar">
+        <div class="big"><span class="a">20%</span><span class="arrow">→</span><span class="b">32%</span><span class="goal">target 40%</span></div>
+        <div>
+          <div class="lab">Live result · within ~1 month of launch</div>
+          <p style="color:var(--ink);font-size:17px;">Share of pricing interventions operators now make themselves on RPW. Since launch at the end of November 2024 it climbed from 20% to 30%, peaking at <strong>32% in the last week of December 2024</strong> — strong momentum toward the 40% goal. Every point is a manual request that no longer needs a pricing analyst.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM DETAIL -->
+  <section>
+    <div class="wrap rv">
+      <div class="eyebrow">The problem</div>
+      <h2>Powerful pricing,<br/><em>locked behind friction</em></h2>
+      <p class="lead" style="margin-top:24px;">Two groups felt the same gap from opposite sides — operators who couldn't act, and analysts buried in their requests.</p>
+      <div class="cols" style="margin-top:40px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom:14px;">For the bus operator</div>
+          <ul class="clean" style="margin-top:0;">
+            <li>Low discoverability — the revMax page and its functions were hard to find.</li>
+            <li>A minimum of 5 clicks plus a scroll to reach the fare-update modal.</li>
+            <li>Confusing UI — the seat-category multi-select overlapped text and dropdowns.</li>
+            <li>No link between a fare change and the metrics operators actually track.</li>
+            <li>Too many metrics on screen — clutter read as complexity.</li>
+            <li>Missing operations (e.g. freeze fare) forced a fallback to WhatsApp/Telegram requests.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:14px;">For the pricing analyst</div>
+          <ul class="clean" style="margin-top:0;">
+            <li>Bandwidth swallowed by routine data-entry that could be self-served.</li>
+            <li>Every manual request carried a probability of error.</li>
+            <li>SLA breaches on high-volume days, when requests spiked the most.</li>
+          </ul>
+          <div class="note" style="margin-top:26px;"><div class="t">The cost</div><p>80% of all pricing interventions still ran through analysts on ARTH — 50% reactive, 30% proactive — instead of operators handling them in seconds.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA -->
+  <section>
+    <div class="wrap rv">
+      <div class="eyebrow">What the data said</div>
+      <h2>Operators intervene in a<br/><em>narrow, predictable</em> way</h2>
+      <p class="lead" style="margin-top:24px;">Before designing, I read three months of intervention data. The pattern was unusually tight — which meant a small, focused surface could cover the overwhelming majority of real cases.</p>
+
+      <div class="compare">
+        <div class="surface">
+          <div class="h"><span class="name">ARTH · internal portal</span><span class="share">80%</span></div>
+          <ul>
+            <li>50% reactive · 30% proactive interventions.</li>
+            <li>&gt;99.5% are for non-contiguous dates — all on single dates of journey.</li>
+            <li>65% happen on the day of journey, 15% on DOJ-1.</li>
+            <li>40% update seat-category min/max; 33% raise or lower fares.</li>
+            <li>40% are applied via routes.</li>
+          </ul>
+        </div>
+        <div class="surface">
+          <div class="h"><span class="name">RPW · operator portal</span><span class="share">20%</span></div>
+          <ul>
+            <li>Only a fifth of interventions happen here today.</li>
+            <li>70% are revisions to minimum / maximum values.</li>
+            <li>67% on the day of journey, 25% on DOJ-1.</li>
+            <li>18% applied via routes.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reframe" style="margin-top:46px;">
+        <div class="box from"><div class="t">The obvious read</div><p>Operators need ARTH's full power ported to RPW — every feature, every edge case.</p></div>
+        <div class="arr">→</div>
+        <div class="box to"><div class="t">The reframe</div><p>Operators need the few operations they actually do — min/max, reset, freeze, on a single date — made effortless. Cover the 95%, don't clone the tool.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRINCIPLES -->
+  <section>
+    <div class="wrap rv">
+      <div class="eyebrow">Design principles</div>
+      <h2>Six rules the<br/>design had to <em>hold</em></h2>
+      <div class="principles">
+        <div class="principle"><div class="n">01</div><h3>Discoverable &amp; near-zero learning</h3><p>Updating a fare on RPW had to be obvious and self-evident — minimal user education, action completed in the fewest possible steps.</p></div>
+        <div class="principle"><div class="n">02</div><h3>A first run that hooks</h3><p>The operator's first experience had to be simple and seamless enough to drive repeat visits — WhatsApp/Telegram reserved only for complex, un-exposed operations.</p></div>
+        <div class="principle"><div class="n">03</div><h3>Decisions, on the right metrics</h3><p>Operators should act on the numbers that matter to them — occupancy, revenue, expenses — surfaced right where the decision is made.</p></div>
+        <div class="principle"><div class="n">04</div><h3>Validations &amp; prerequisites</h3><p>If one operation must precede another, the system says so. Necessary checks run before a request executes.</p></div>
+        <div class="principle"><div class="n">05</div><h3>Eliminate operator error</h3><p>If a value changes significantly — even within permissible limits — the operator is notified before it's applied.</p></div>
+        <div class="principle"><div class="n">06</div><h3>One service-DOJ at a time</h3><p>Scope each update to a single service and date of journey (except association min-max), keeping the mental model clean and reversible.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTION / FINAL DESIGN -->
+  <section>
+    <div class="wide rv">
+      <div class="eyebrow">The solution</div>
+      <h2 class="wrap" style="padding:0;">From a five-click maze<br/>to <em>one fare surface</em></h2>
+      <p class="lead wrap" style="padding:0;margin-top:24px;">Every operation now lives on a single screen. A segmented <strong>“Update fare by”</strong> control switches between the three modes operators need, a live metric strip ties the change to outcomes, and route + seat-layout selection sit side by side — no modal-digging, no scroll-hunting.</p>
+
+      <div class="decision">
+        <div class="txt"><div class="num">01 — Min-Max Update</div><h3>The 70% case, made the default</h3>
+          <p>Seven in ten RPW interventions are min/max revisions, so it leads. Operators pick routes and seat categories on the left and middle, set new minimum and maximum fares on the right, and confirm — all without leaving the surface.</p></div>
+        <figure><img class="shot" loading="lazy" decoding="async" src="../assets/case-studies/revmax/update-fare.png" alt="Min-Max fare update — routes panel, seat layout, and per-seat-category min/max inputs" /><figcaption>Min-Max update — routes, seat layout, and per-category min/max fares, with the live metric strip (Revenue · ASP · Seats Sold · RevPass) framing every decision.</figcaption></figure>
+      </div>
+
+      <div class="decision">
+        <div class="txt"><div class="num">02 — Reset Fare</div><h3>Undo, without a support ticket</h3>
+          <p>Resetting a fare to a specified value was previously analyst-only. Now it's one mode-switch away, reusing the same seat-layout mental model so there's nothing new to learn.</p></div>
+        <figure><img class="shot" loading="lazy" decoding="async" src="../assets/case-studies/revmax/reset-fare.png" alt="Reset fare mode — reset selected seat categories to a specified value from the same surface" /><figcaption>Reset fare — the same surface, a different verb. Consistency means an operator who can do one mode can do all three.</figcaption></figure>
+      </div>
+
+      <div class="decision">
+        <div class="txt"><div class="num">03 — Freeze Fare</div><h3>Hold a price, with a reason</h3>
+          <p>Freeze fare — entirely missing from RPW before — lets operators lock a price for selected seats and dates, capturing a reason for the change so the action is auditable and the system can flag anomalies.</p></div>
+        <figure><img class="shot" loading="lazy" decoding="async" src="../assets/case-studies/revmax/freeze-fare.png" alt="Freeze fare mode — lock fares for a seat group with a reason for update" /><figcaption>Freeze fare — seat-group selection with a required reason, bringing a previously analyst-only operation into self-serve.</figcaption></figure>
+      </div>
+
+      <div class="note"><div class="t">Built on the system</div><p>The surface is assembled from redPro v2's component library — shared data tables, seat-layout atoms, toggles and the metric “dataUnit” card — so the three modes stay visually consistent and the patterns extend to the P1/P2 roadmap below.</p></div>
+    </div>
+  </section>
+
+  <!-- SCOPE / ROADMAP -->
+  <section>
+    <div class="wrap rv">
+      <div class="eyebrow">Scope &amp; roadmap</div>
+      <h2>Shipping the <em>P0 core</em>,<br/>with a path beyond</h2>
+      <p class="lead" style="margin-top:24px;">Prioritised against the data — the operations and experiences that move the north-star metric first.</p>
+      <div class="ptable">
+        <div class="prow"><span>Min-Max update, fare reset &amp; fare freeze on RPW</span><span class="pill p0">P0</span></div>
+        <div class="prow"><span>BO insights v1 — season/competition revisions, low occupancy at minimum, upcoming demand by route</span><span class="pill p0">P0</span></div>
+        <div class="prow"><span>First-run experience — dashboard pop-up &amp; tooltip-guided flow</span><span class="pill p0">P0</span></div>
+        <div class="prow"><span>Association Min-Max configuration</span><span class="pill p0">P0</span></div>
+        <div class="prow"><span>In-product feedback / feature NPS</span><span class="pill p0">P0</span></div>
+        <div class="prow"><span>Switch pricing modes · expense &amp; targeted-revenue config</span><span class="pill p1">P1</span></div>
+        <div class="prow"><span>BO insights v2 + recommended actions · escalation status &amp; reports</span><span class="pill p1">P1</span></div>
+        <div class="prow"><span>revMax on the RPW mobile app · insights on WhatsApp/Telegram · in-product onboarding &amp; CSAT</span><span class="pill p2">P2</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTCOMES -->
+  <section>
+    <div class="wrap rv">
+      <div class="eyebrow">Impact</div>
+      <h2>A proven self-serve<br/><em>success</em></h2>
+      <p class="lead" style="margin-top:24px;">revMax went live at the end of <strong>November 2024</strong> and has proven to be a highly successful self-serve / pull product — automating tasks operators previously had to request, easing pressure on pricing analysts, and minimising manual error.</p>
+      <div class="metrics">
+        <div class="metric"><div class="target-flag">Live result</div><div class="val">20% → 32%</div><div class="lab">Self-serve interventions on RPW — up from 20%, peaking at 32% in the last week of Dec 2024 (target 40%)</div><div class="src">Real-time RPW data, ~1 month post-launch</div></div>
+        <div class="metric"><div class="val">5+ → 1</div><div class="lab">Screens to update a fare — from a clicks-and-scroll maze to a single surface</div><div class="src">Redesigned RPW fare flow</div></div>
+        <div class="metric"><div class="val">3</div><div class="lab">Analyst-only operations brought into self-serve: min-max, reset &amp; freeze</div><div class="src">P0 feature scope</div></div>
+      </div>
+      <div class="note" style="margin-top:24px;"><div class="t">Why it matters</div><p>Reaching 32% within just 1–2 months of launch — 12 points of the 20-point journey to target — is strong, fast momentum. Every point shifted is a manual request that no longer routes through a pricing analyst, compounding into real gains in efficiency and operator engagement.</p></div>
+      <ul class="clean" style="margin-top:30px;">
+        <li>Each operation operators now self-serve is a request removed from the analyst queue — directly reducing manual-error risk and SLA breaches on high-volume days.</li>
+        <li>Bringing the metric strip (Revenue, ASP, Seats Sold, RevPass) next to the action turns fare changes from blind edits into informed pricing decisions.</li>
+        <li>A first-run pop-up and tooltip-guided flow lower the cost of the very first fare update — the moment that decides whether an operator ever comes back.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section>
+    <div class="wrap rv">
+      <div class="eyebrow">Reflection</div>
+      <div class="reflect">
+        <div><div class="t">The unlock</div><p>The data did the hard editing for me. Knowing that 70% of RPW interventions are min/max on a single date meant I could design a focused surface instead of porting an entire internal tool — less to build, far less for operators to learn.</p></div>
+        <div><div class="t">The hardest call</div><p>Deciding what <em>not</em> to expose. Keeping complex, low-frequency operations on WhatsApp/Telegram kept the first-run experience simple — the principle that protects adoption.</p></div>
+        <div><div class="t">What's next</div><p>BO insights v2 with recommended actions, switchable pricing modes, and the whole experience on mobile — so an operator can re-price a route from their phone, the moment demand shifts.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <a class="next-proj rv" href="rpw-homepage-revamp.html">
+    <div class="row">
+      <div>
+        <div class="np-k">Next project</div>
+        <h2>RPW Homepage <em>Revamp</em></h2>
+      </div>
+      <div class="np-arrow">→</div>
+    </div>
+  </a>
+
+  <!-- FOOTER -->
+  <footer class="rv">
+    <div class="eyebrow" style="justify-content:center;">Thanks for reading</div>
+    <h2>Let's build something <em>that lasts</em></h2>
+    <p class="muted" style="max-width:46ch;margin:14px auto 0;">Swaraj Kumar · Senior UX Designer</p>
+    <div class="foot-links">
+      <a href="mailto:swaraj.kumar0103@gmail.com">swaraj.kumar0103@gmail.com</a>
+      <a href="https://swaraj.design" target="_blank" rel="noopener">swaraj.design</a>
+      <a href="https://linkedin.com/in/swarajkumar" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html#work">More work</a>
+    </div>
+    <div class="foot-meta">© 2024 Swaraj Kumar · redPro v2 · revMax</div>
+  </footer>
+
+  <script>
+    const bar = document.getElementById('bar');
+    addEventListener('scroll', () => {
+      const m = document.documentElement.scrollHeight - innerHeight;
+      bar.style.width = (m > 0 ? (scrollY / m) * 100 : 0) + '%';
+    }, { passive: true });
+    const io = new IntersectionObserver((es) => {
+      es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.rv').forEach(el => io.observe(el));
+  </script>
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="../enhance.js" defer></script>
+</body>
+</html>

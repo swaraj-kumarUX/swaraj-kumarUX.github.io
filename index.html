@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Swaraj Kumar — Senior UX Designer</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');}catch(e){document.documentElement.dataset.theme='dark';}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#f4ecdf;
+    --ink-dim:rgba(244,236,223,.62);
+    --gold:#f3c987;
+    --rose:#e89b8c;
+    --mist:#bcd5e6;
+    --bg:#0a0a14;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:auto;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    cursor:default;
+  }
+
+  /* ---------- WEBGL CANVAS ---------- */
+  #scene{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;}
+
+  /* ---------- ATMOSPHERE OVERLAYS ---------- */
+  .grain{
+    position:fixed;inset:0;z-index:2;pointer-events:none;mix-blend-mode:overlay;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  }
+  .vignette{
+    position:fixed;inset:0;z-index:2;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 42%,transparent 45%,rgba(5,4,12,.55) 100%);
+  }
+  .scrim{ /* subtle bottom darkening for legibility */
+    position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.0;transition:opacity .6s ease;
+    background:linear-gradient(180deg,rgba(6,5,16,.35) 0%,transparent 28%,transparent 70%,rgba(6,5,16,.45) 100%);
+  }
+
+  /* ---------- LOADER ---------- */
+  #loader{
+    position:fixed;inset:0;z-index:50;background:#06060f;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:28px;transition:opacity 1.1s ease;
+  }
+  #loader.hidden{opacity:0;pointer-events:none;}
+  .loader-mark{
+    font-family:'Cormorant Garamond',serif;font-weight:500;letter-spacing:.5em;
+    font-size:clamp(28px,5vw,46px);text-indent:.5em;color:var(--ink);
+  }
+  .loader-bar{width:min(220px,46vw);height:1px;background:rgba(244,236,223,.18);overflow:hidden;}
+  .loader-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rose),var(--gold));transition:width .4s ease;}
+  .loader-sub{font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--ink-dim);}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:0;left:0;width:100%;z-index:20;display:flex;align-items:center;
+    justify-content:space-between;padding:26px clamp(20px,4vw,54px);
+    mix-blend-mode:difference;
+  }
+  .brand{font-family:'Cormorant Garamond',serif;font-size:23px;letter-spacing:.46em;text-indent:.46em;font-weight:500;}
+  .nav-links{display:flex;gap:34px;align-items:center;}
+  .nav-links a{color:var(--ink);text-decoration:none;font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;opacity:.85;transition:opacity .3s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-enter{border:1px solid var(--ink);padding:9px 20px;border-radius:40px;}
+  @media(max-width:720px){.nav-links a:not(.nav-enter){display:none;}}
+
+  /* ---------- PROGRESS RAIL ---------- */
+  .rail{position:fixed;right:clamp(16px,2.4vw,34px);top:50%;transform:translateY(-50%);z-index:20;
+    display:flex;flex-direction:column;gap:16px;align-items:center;mix-blend-mode:difference;}
+  .rail button{all:unset;cursor:pointer;width:7px;height:7px;border-radius:50%;border:1px solid var(--ink);
+    opacity:.4;transition:.35s;}
+  .rail button.on{opacity:1;background:var(--ink);transform:scale(1.35);}
+  @media(max-width:720px){.rail{display:none;}}
+
+  /* ---------- SCROLL STATIONS ---------- */
+  .content{position:relative;z-index:10;}
+  .station{height:100vh;width:100%;display:flex;flex-direction:column;justify-content:center;
+    padding:0 clamp(22px,7vw,120px);pointer-events:none;}
+  .station .inner{position:relative;max-width:min(720px,92vw);opacity:0;transform:translateY(38px);transition:opacity 1s ease,transform 1.2s cubic-bezier(.16,.8,.26,1);}
+  /* soft readability halo behind station copy — keeps text legible over bright sea/sky */
+  .station .inner::before{content:"";position:absolute;inset:-60px -120px;z-index:-1;pointer-events:none;
+    background:radial-gradient(80% 75% at 0% 50%,rgba(6,5,16,.5),rgba(6,5,16,.22) 45%,transparent 72%);
+    filter:blur(18px);}
+  .station.center .inner::before{background:radial-gradient(70% 75% at 50% 50%,rgba(6,5,16,.5),rgba(6,5,16,.2) 50%,transparent 74%);}
+  .station.right .inner::before{background:radial-gradient(80% 75% at 100% 50%,rgba(6,5,16,.5),rgba(6,5,16,.22) 45%,transparent 72%);}
+  .station.show .inner{opacity:1;transform:none;}
+  .station.right .inner{margin-left:auto;text-align:right;}
+  .station.center{align-items:center;text-align:center;}
+
+  .eyebrow{display:inline-flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.4em;
+    text-transform:uppercase;color:var(--gold);margin-bottom:22px;}
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold);opacity:.7;}
+  .station.right .eyebrow{flex-direction:row-reverse;}
+
+  h1.hero{
+    font-family:'Cormorant Garamond',serif;font-weight:300;line-height:.86;
+    font-size:clamp(76px,19vw,260px);letter-spacing:.02em;
+    text-shadow:0 14px 70px rgba(0,0,0,.45);
+  }
+  h1.hero em{font-style:italic;font-weight:500;}
+  h1.hero.name{font-size:clamp(62px,13.5vw,184px);line-height:.82;}
+  h1.hero.name em{color:var(--gold);}
+  .hero-sub .ae{font-style:italic;color:var(--gold);}
+  .hero-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;
+    font-size:clamp(20px,3vw,34px);color:var(--ink);margin-top:26px;opacity:.92;line-height:1.35;}
+
+  h2{font-family:'Cormorant Garamond',serif;font-weight:300;line-height:.95;
+    font-size:clamp(46px,8.5vw,120px);letter-spacing:.01em;text-shadow:0 12px 60px rgba(0,0,0,.4);}
+  h2 em{font-style:italic;font-weight:500;color:var(--gold);}
+  .lede{font-size:clamp(15px,1.7vw,19px);line-height:1.7;color:var(--ink-dim);max-width:46ch;margin-top:26px;font-weight:300;}
+  .station .lede{color:rgba(245,238,227,.94);text-shadow:0 2px 26px rgba(8,6,18,.7);}
+  .station.right .lede{margin-left:auto;}
+
+  .stat-row{display:flex;gap:clamp(26px,4vw,64px);margin-top:40px;}
+  .station.right .stat-row{justify-content:flex-end;}
+  .station.center .stat-row{justify-content:center;}
+  .stat .n{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4.4vw,58px);font-weight:500;line-height:1;}
+  .stat .l{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-dim);margin-top:10px;}
+
+  .cta{pointer-events:auto;display:inline-flex;align-items:center;gap:14px;margin-top:42px;
+    font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--bg);
+    background:var(--ink);padding:17px 30px;border-radius:46px;text-decoration:none;
+    transition:transform .4s cubic-bezier(.16,.8,.26,1),box-shadow .4s;box-shadow:0 10px 40px rgba(243,201,135,.18);}
+  .cta:hover{transform:translateY(-3px);box-shadow:0 18px 54px rgba(243,201,135,.32);}
+  .cta.ghost{background:transparent;color:var(--ink);border:1px solid rgba(244,236,223,.4);box-shadow:none;}
+
+  .scroll-hint{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:20;
+    font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--ink-dim);
+    display:flex;flex-direction:column;align-items:center;gap:12px;mix-blend-mode:difference;
+    transition:opacity .6s;}
+  .scroll-hint .line{width:1px;height:46px;background:linear-gradient(var(--ink),transparent);position:relative;overflow:hidden;}
+  .scroll-hint .line::after{content:"";position:absolute;top:-50%;left:0;width:100%;height:50%;
+    background:var(--ink);animation:drop 2.4s ease-in-out infinite;}
+  @keyframes drop{0%{top:-50%}60%,100%{top:120%}}
+
+  /* ---------- PORTFOLIO (reading space over the calmed world) ---------- */
+  .portfolio{position:relative;z-index:10;
+    background:linear-gradient(180deg,transparent 0%,rgba(8,7,18,.74) 12%,rgba(8,7,18,.9) 30%,rgba(8,7,18,.94) 100%);
+    backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+    border-top:1px solid rgba(244,236,223,.08);}
+  .pf{min-height:92vh;display:flex;align-items:center;padding:120px clamp(22px,7vw,120px);}
+  .pf.center{justify-content:center;text-align:center;}
+  .pf-inner{width:100%;max-width:1080px;margin:0 auto;opacity:0;transform:translateY(34px);
+    transition:opacity 1s ease,transform 1.1s cubic-bezier(.16,.8,.26,1);}
+  .pf-inner.show{opacity:1;transform:none;}
+  .pf-h{font-family:'Cormorant Garamond',serif;font-weight:300;line-height:.92;
+    font-size:clamp(44px,7vw,98px);}
+  .pf-h em{font-style:italic;color:var(--gold);}
+  .pf-role{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--mist);margin-top:18px;}
+  .pf .lede{margin-top:24px;max-width:60ch;}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;}
+  .chips span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);
+    border:1px solid rgba(188,213,230,.28);border-radius:30px;padding:8px 15px;
+    transition:border-color .3s,color .3s;}
+  .chips span:hover{border-color:var(--gold);color:var(--gold);}
+
+  /* featured case study */
+  .featured{display:grid;grid-template-columns:1.05fr 1fr;gap:0;margin-top:22px;text-decoration:none;color:var(--ink);
+    border:1px solid rgba(244,236,223,.12);border-radius:22px;overflow:hidden;background:rgba(255,255,255,.035);
+    transition:transform .5s cubic-bezier(.16,.8,.26,1),border-color .5s,box-shadow .5s;}
+  .featured:first-of-type{margin-top:50px;}
+  .featured-media.shot-media{background-size:cover;background-position:left top;}
+  .featured-media.shot-media::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(10,9,22,.15),rgba(10,9,22,.55));}
+  .featured:hover{transform:translateY(-5px);border-color:rgba(243,201,135,.5);box-shadow:0 28px 70px rgba(0,0,0,.4);}
+  @media(max-width:820px){.featured{grid-template-columns:1fr;}}
+  .featured-media{min-height:300px;position:relative;
+    background:
+      radial-gradient(90% 80% at 20% 10%,rgba(120,74,160,.55),transparent 60%),
+      radial-gradient(70% 70% at 95% 90%,rgba(243,201,135,.35),transparent 60%),
+      repeating-linear-gradient(135deg,rgba(255,255,255,.03) 0 16px,transparent 16px 32px),
+      linear-gradient(160deg,#19112e,#0d0b1c);}
+  .featured-media .fkicker{position:absolute;z-index:2;top:22px;left:24px;font-size:10.5px;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--gold);}
+  .featured-body{padding:clamp(30px,3.4vw,46px);display:flex;flex-direction:column;justify-content:center;}
+  .ftags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+  .ftags span{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);
+    border:1px solid rgba(244,236,223,.18);border-radius:30px;padding:5px 11px;}
+  .ftags .shipped{color:#0a0a14;background:var(--gold);border-color:var(--gold);}
+  .featured-body h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.04;}
+  .featured-body p{font-size:14.5px;line-height:1.6;color:var(--ink-dim);margin-top:16px;font-weight:300;max-width:46ch;}
+  .featured-body .go{margin-top:24px;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);}
+
+  /* work grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px;}
+  @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+  .card{position:relative;display:block;text-decoration:none;color:var(--ink);
+    background:rgba(255,255,255,.035);border:1px solid rgba(244,236,223,.1);border-radius:18px;
+    padding:26px 24px 22px;min-height:208px;overflow:hidden;
+    transition:transform .5s cubic-bezier(.16,.8,.26,1),background .5s,border-color .5s;}
+  .card::after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;
+    background:radial-gradient(120% 90% at 100% 0%,rgba(243,201,135,.16),transparent 55%);opacity:0;transition:opacity .5s;}
+  .card:hover{transform:translateY(-6px);background:rgba(255,255,255,.06);border-color:rgba(243,201,135,.45);}
+  .card:hover::after{opacity:1;}
+  .card .idx{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold);opacity:.8;}
+  .card .tag{float:right;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
+    border:1px solid rgba(244,236,223,.18);border-radius:30px;padding:5px 11px;margin-top:6px;}
+  .card h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(22px,2.4vw,28px);
+    line-height:1.05;margin-top:34px;}
+  .card p{font-size:13.5px;line-height:1.55;color:var(--ink-dim);margin-top:12px;font-weight:300;}
+  .card .go{display:inline-block;margin-top:18px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);}
+
+  /* journey two-column timeline */
+  .two-col{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(40px,6vw,90px);margin-top:50px;}
+  @media(max-width:820px){.two-col{grid-template-columns:1fr;gap:54px;}}
+  .col-h{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);
+    padding-bottom:16px;border-bottom:1px solid rgba(244,236,223,.14);margin-bottom:8px;}
+  .time{list-style:none;}
+  .time li{padding:22px 0;border-bottom:1px solid rgba(244,236,223,.08);}
+  .time .yr{display:block;font-size:11px;letter-spacing:.18em;color:var(--mist);margin-bottom:7px;}
+  .time strong{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:21px;display:block;}
+  .time em{font-style:normal;font-size:13px;color:var(--ink-dim);letter-spacing:.04em;}
+  .time p{font-size:13px;line-height:1.55;color:var(--ink-dim);margin-top:9px;font-weight:300;max-width:48ch;}
+  .writing{list-style:none;}
+  .writing li{border-bottom:1px solid rgba(244,236,223,.08);}
+  .writing a{display:flex;justify-content:space-between;align-items:center;gap:18px;
+    padding:18px 0;text-decoration:none;color:var(--ink);font-family:'Cormorant Garamond',serif;
+    font-size:19px;font-weight:500;transition:color .3s,padding .4s;}
+  .writing a:hover{color:var(--gold);padding-left:8px;}
+  .writing a span{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--ink-dim);white-space:nowrap;}
+
+  /* contact */
+  .contact-actions{margin-top:38px;}
+  .socials{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:44px;}
+  .socials a{color:var(--ink-dim);text-decoration:none;font-size:11.5px;letter-spacing:.24em;
+    text-transform:uppercase;transition:color .3s;position:relative;}
+  .socials a:hover{color:var(--ink);}
+  .pf-foot{margin-top:64px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,236,223,.4);}
+
+  /* nav link underline sweep */
+  .nav-links a:not(.nav-enter){position:relative;}
+  .nav-links a:not(.nav-enter)::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:1px;
+    background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .45s cubic-bezier(.16,.8,.26,1);}
+  .nav-links a:not(.nav-enter):hover::after{transform:scaleX(1);transform-origin:left;}
+  .nav-enter{transition:background .4s ease,color .4s ease;}
+  .nav-enter:hover{background:var(--ink);color:var(--bg);}
+
+  /* skills marquee band */
+  .marquee{position:relative;z-index:10;overflow:hidden;padding:30px 0;border-block:1px solid rgba(244,236,223,.1);
+    background:rgba(8,7,18,.5);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+            mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);}
+  .marquee-track{display:flex;gap:0;width:max-content;animation:marq 34s linear infinite;}
+  .marquee:hover .marquee-track{animation-play-state:paused;}
+  .marquee-track span{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;
+    font-size:clamp(24px,3.2vw,42px);color:var(--ink);padding:0 34px;white-space:nowrap;opacity:.9;}
+  .marquee-track span::after{content:"✦";font-style:normal;color:var(--gold);margin-left:34px;font-size:.5em;vertical-align:middle;}
+  @keyframes marq{to{transform:translateX(-50%);}}
+</style>
+<link rel="stylesheet" href="enhance.css" />
+</head>
+<body>
+
+  <canvas id="scene"></canvas>
+  <div class="vignette"></div>
+  <div class="scrim" id="scrim"></div>
+  <div class="grain"></div>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-mark">SWARAJ</div>
+    <div class="loader-bar"><i id="loadFill"></i></div>
+    <div class="loader-sub" id="loadTxt">setting the scene</div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="brand">SWARAJ&nbsp;KUMAR</div>
+    <div class="nav-links">
+      <a href="#begin">Story</a>
+      <a href="#maker">About</a>
+      <a href="#work">Work</a>
+      <a href="#path">Journey</a>
+      <a href="#contact" class="nav-enter" data-magnetic="0.35">Contact</a>
+    </div>
+  </nav>
+
+  <!-- PROGRESS RAIL -->
+  <div class="rail" id="rail"></div>
+
+  <!-- SCROLL HINT -->
+  <div class="scroll-hint" id="hint"><span>scroll to begin</span><span class="line"></span></div>
+
+  <!-- STATIONS -->
+  <div class="content">
+
+    <section class="station center show" data-i="0">
+      <div class="inner">
+        <div class="eyebrow">Senior UX Designer @ redBus — Bangalore, India</div>
+        <h1 class="hero name">Swaraj<br/><em>Kumar</em></h1>
+        <p class="hero-sub">I design products that put people first.<br/>This is my story — scroll to <span class="ae">begin</span>.</p>
+      </div>
+    </section>
+
+    <section class="station" data-i="1" id="begin">
+      <div class="inner">
+        <div class="eyebrow">Where it started</div>
+        <h2>From listening<br/>to <em>designing</em></h2>
+        <p class="lede">My path didn't begin in design — it began in conversations. Supporting customers at Amazon, I learned that every frustration is a design problem in disguise. Empathy became my first tool, and it still leads every decision I make.</p>
+      </div>
+    </section>
+
+    <section class="station right" data-i="2" id="believe">
+      <div class="inner">
+        <div class="eyebrow">How I work</div>
+        <h2>Clarity is a<br/>form of <em>kindness</em></h2>
+        <p class="lede">Good design removes friction so quietly you never notice it. I obsess over flows, mental models and the small moments in between — turning research into interfaces that feel obvious, honest and human.</p>
+      </div>
+    </section>
+
+    <section class="station" data-i="3" id="bring">
+      <div class="inner">
+        <div class="eyebrow">What I bring</div>
+        <h2>Systems thinker,<br/><em>steady hands</em></h2>
+        <p class="lede">I build design systems that keep teams aligned, translate messy research into clear direction, and collaborate across functions without losing the thread. Reliable in ambiguity, curious by default, and quietly relentless about the details.</p>
+      </div>
+    </section>
+
+    <section class="station right" data-i="4" id="aspire">
+      <div class="inner">
+        <div class="eyebrow">Where I'm headed</div>
+        <h2>Designing for<br/>what's <em>next</em></h2>
+        <p class="lede">I'm growing toward product-design leadership — shaping not just screens but the strategy behind them, and working with people who care about leaving a real mark on technology. The goal has never changed: building products that genuinely matter.</p>
+      </div>
+    </section>
+
+    <section class="station center" data-i="5" id="enter">
+      <div class="inner">
+        <div class="eyebrow">Let's talk</div>
+        <h2>Let's build<br/>something <em>that lasts</em></h2>
+        <p class="lede" style="margin-left:auto;margin-right:auto;text-align:center;">Below: a closer look at me, the work, the journey so far, and the easiest way to reach me.</p>
+        <div style="margin-top:8px;">
+          <a href="#maker" class="cta" data-magnetic="0.3">More about me ↓</a>
+          <a href="#contact" class="cta ghost" style="margin-left:14px;" data-magnetic="0.3">Get in touch</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ PORTFOLIO (the designer behind the world) ============ -->
+  <div class="portfolio">
+
+    <!-- ABOUT -->
+    <section class="pf" id="maker">
+      <div class="pf-inner reveal">
+        <div class="eyebrow">About</div>
+        <h2 class="pf-h">A designer who<br/>leads with <em>empathy</em></h2>
+        <p class="pf-role">Senior UX Designer @ redBus · MakeMyTrip group — Bangalore, India</p>
+        <p class="lede">I'm a Senior UX Designer at redBus (MakeMyTrip group) with 5+ years of experience — leading end-to-end UX for operator and customer-facing products, from research and wireframes to high-fidelity prototypes and the design system that holds it all together. I care most about the people on the other side of the screen, and my ambition is to grow into product-design leadership and build things that genuinely matter.</p>
+        <div class="chips">
+          <span>Empathy-led</span><span>Systems thinking</span><span>Research → design</span>
+          <span>Cross-functional</span><span>Detail-obsessed</span><span>Calm in ambiguity</span>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="n">5+</div><div class="l">Years in UX</div></div>
+          <div class="stat"><div class="n">6</div><div class="l">Selected case studies</div></div>
+          <div class="stat"><div class="n">Senior</div><div class="l">UX Designer @ redBus</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS MARQUEE -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Product Design</span><span>Design Systems</span><span>User Research</span><span>Interaction Design</span><span>Prototyping</span><span>Data Visualisation</span><span>Design Strategy</span>
+        <span>Product Design</span><span>Design Systems</span><span>User Research</span><span>Interaction Design</span><span>Prototyping</span><span>Data Visualisation</span><span>Design Strategy</span>
+      </div>
+    </div>
+
+    <!-- SELECTED WORK -->
+    <section class="pf" id="work">
+      <div class="pf-inner reveal">
+        <div class="eyebrow">Selected work</div>
+        <h2 class="pf-h">Things I've <em>made</em></h2>
+        <p class="lede">Featured deep-dives below, plus case studies in product, systems and interaction design.</p>
+
+        <a class="featured" href="work/rpw-homepage-revamp.html">
+          <div class="featured-media shot-media" style="background-image:url('assets/case-studies/rpw-home/homepage.png');"><span class="fkicker">Featured case study</span></div>
+          <div class="featured-body">
+            <div class="ftags"><span>Product Design</span><span>Dashboard</span><span>Data Viz</span><span class="shipped">Shipped · 2025</span></div>
+            <h3>RPW Homepage Revamp</h3>
+            <p>Turned a wall of metrics into a homepage that tells bus operators what needs attention today — ranking at-risk services and pairing each with a benchmarked, one-tap recommendation across redDeal, Ads, Rise and revMax.</p>
+            <span class="go">Read the full case study →</span>
+          </div>
+        </a>
+
+        <a class="featured" href="work/revmax-self-serve-rpw.html">
+          <div class="featured-media shot-media" style="background-image:url('assets/case-studies/revmax/update-fare.png');"><span class="fkicker">Featured case study</span></div>
+          <div class="featured-body">
+            <div class="ftags"><span>Product Design</span><span>Self-Serve</span><span>Data Viz</span><span class="shipped">Live · Nov 2024</span></div>
+            <h3>revMax Self-Serve on redPro</h3>
+            <p>Collapsed a five-click, analyst-dependent fare tool into one self-serve surface for bus operators. Live since Nov 2024 — self-serve interventions on RPW climbed from 20% to 32% within two months, on the way to a 40% target.</p>
+            <span class="go">Read the full case study →</span>
+          </div>
+        </a>
+
+        <a class="featured" href="work/marketplace-hygiene-dashboard.html">
+          <div class="featured-media"><span class="fkicker">Featured case study</span></div>
+          <div class="featured-body">
+            <div class="ftags"><span>Product Design</span><span>Data Viz</span><span>Design System</span><span class="shipped">Shipped · 2024</span></div>
+            <h3>Marketplace Hygiene Dashboard</h3>
+            <p>A triage-first operator dashboard for redPro — giving bus operators visibility into route health before penalties hit. Cut flagging-related support tickets 34% across 120+ operators.</p>
+            <span class="go">Read the full case study →</span>
+          </div>
+        </a>
+
+        <div class="grid">
+          <a class="card" href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">
+            <span class="idx">01</span><span class="tag">Design systems</span>
+            <h3>Theme Color Tokenization</h3>
+            <p>A scalable token architecture for consistent theming across a product.</p><span class="go">View case →</span>
+          </a>
+          <a class="card" href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">
+            <span class="idx">02</span><span class="tag">Product</span>
+            <h3>BeNeighbor</h3>
+            <p>A community product connecting people through their immediate surroundings.</p><span class="go">View case →</span>
+          </a>
+          <a class="card" href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">
+            <span class="idx">03</span><span class="tag">UX · Niche</span>
+            <h3>Time Tracker for Gamers</h3>
+            <p>Helping players understand and reclaim the hours they spend in-game.</p><span class="go">View case →</span>
+          </a>
+          <a class="card" href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">
+            <span class="idx">04</span><span class="tag">Foundations</span>
+            <h3>Understanding Colors</h3>
+            <p>An exploration of colour theory and how it shapes interface decisions.</p><span class="go">View case →</span>
+          </a>
+          <a class="card" href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">
+            <span class="idx">05</span><span class="tag">Interaction</span>
+            <h3>Notification Panel</h3>
+            <p>Rethinking how a product surfaces, groups and clears notifications.</p><span class="go">View case →</span>
+          </a>
+          <a class="card" href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">
+            <span class="idx">06</span><span class="tag">Complex UI</span>
+            <h3>Complex Canvas — Visual &amp; Functional Design</h3>
+            <p>Visual and functional design for a dense, canvas-based workspace.</p><span class="go">View case →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- JOURNEY: experience + education -->
+    <section class="pf" id="path">
+      <div class="pf-inner reveal">
+        <div class="eyebrow">The path so far</div>
+        <h2 class="pf-h">A working <em>journey</em></h2>
+        <div class="two-col">
+          <div>
+            <h4 class="col-h">Experience</h4>
+            <ul class="time">
+              <li><span class="yr">Jul 2024 — Now</span><strong>Senior UX Designer</strong><em>redBus · MakeMyTrip group</em><p>Leading end-to-end UX for operator and customer-facing features — route optimisation, boarding-point management, seat-layout improvements — while scaling the design system and researching operator workflows to lift adoption and usability.</p></li>
+              <li><span class="yr">2022 — 2024</span><strong>Senior UI/UX Designer</strong><em>Unisys (Quess Corp)</em><p>Conceptualised and launched new feature sets, and componentised Figma design templates — boosting designer efficiency by 60%.</p></li>
+              <li><span class="yr">2021 — 2022</span><strong>Product Designer</strong><em>Workik</em><p>Structured and executed design projects independently with cross-functional teams — engineers, PMs and QA — delivering high-quality solutions on time.</p></li>
+              <li><span class="yr">2020 — 2021</span><strong>UI/UX Designer · Intern</strong><em>Daphnis Labs</em><p>Executed responsive and interaction design following Human Interaction Guidelines.</p></li>
+              <li><span class="yr">2019 — 2020</span><strong>CS Associate</strong><em>Amazon India</em><p>Customer support grounded in empathy mapping and user personas.</p></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="col-h">Education</h4>
+            <ul class="time">
+              <li><span class="yr">2024</span><strong>Generative AI Fundamentals</strong><em>Google Cloud · Certification</em></li>
+              <li><span class="yr">2022 — 2023</span><strong>Design Thinking for UX Designers</strong><em>Indian Institute of Technology, Delhi · Certification</em></li>
+              <li><span class="yr">2020 — 2022</span><strong>Master of Business Administration</strong><em>Army Institute of Management, Kolkata · GPA 9.3</em><p>Focused on Marketing and Analytics — a grounding in business needs and how design connects to them.</p></li>
+              <li><span class="yr">2016 — 2019</span><strong>Bachelor of Commerce</strong><em>Institute for Excellence in Higher Education, Bhopal</em></li>
+            </ul>
+            <h4 class="col-h" style="margin-top:46px;">Writing</h4>
+            <ul class="writing">
+              <li><a href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">Design and Accessibility: A Symbiotic Relationship<span>3 min</span></a></li>
+              <li><a href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">The Importance of Design Systems in Organizational Design<span>5 min</span></a></li>
+              <li><a href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">Understanding UX Design: Crafting Experiences that Matter<span>5 min</span></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="pf center" id="contact">
+      <div class="pf-inner reveal">
+        <div class="eyebrow">The doorway out</div>
+        <h2 class="pf-h">Let's build <em>worlds</em></h2>
+        <p class="lede" style="margin-inline:auto;text-align:center;">Open to product &amp; interaction design work, collaborations, and conversations about making technology feel alive.</p>
+        <div class="contact-actions">
+          <a class="cta" href="mailto:swaraj.kumar0103@gmail.com" data-magnetic="0.3">swaraj.kumar0103@gmail.com</a>
+        </div>
+        <div class="socials">
+          <a href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">Behance</a>
+          <a href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://swarajkumarportfolio.netlify.app/" target="_blank" rel="noopener">Portfolio</a>
+        </div>
+        <div class="pf-foot">© <span id="yr"></span> Swaraj Kumar · Senior UX Designer · Bangalore, India</div>
+      </div>
+    </section>
+
+  </div>
+
+  <script type="importmap">
+  {
+    "imports":{
+      "three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="./world.js"></script>
+  <script src="enhance.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RPW Homepage Revamp — Swaraj Kumar</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');}catch(e){document.documentElement.dataset.theme='dark';}</script>
+<meta name="description" content="Turning a wall of metrics into a homepage that tells bus operators what needs attention and what to do about it. Case study by Swaraj Kumar." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#f4ecdf; --ink-dim:rgba(244,236,223,.62); --gold:#f3c987;
+    --rose:#e89b8c; --mist:#bcd5e6; --green:#a9d6b0; --bg:#0a0a14; --panel:rgba(255,255,255,.035);
+    --line:rgba(244,236,223,.12); --maxw:920px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden;}
+
+  .aura{position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background:
+      radial-gradient(60% 50% at 22% -5%,rgba(74,140,120,.34),transparent 60%),
+      radial-gradient(50% 45% at 92% 4%,rgba(243,201,135,.2),transparent 55%),
+      radial-gradient(70% 60% at 50% 108%,rgba(30,34,66,.6),transparent 60%),
+      linear-gradient(180deg,#0a1020 0%,#0a0a14 42%,#08070f 100%);}
+  .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;mix-blend-mode:overlay;opacity:.4;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");}
+
+  .bar{position:fixed;top:0;left:0;height:2px;width:0;z-index:40;background:linear-gradient(90deg,var(--rose),var(--gold));}
+  header.top{position:fixed;top:0;left:0;width:100%;z-index:31;display:flex;align-items:center;justify-content:space-between;
+    padding:22px clamp(20px,5vw,60px);mix-blend-mode:difference;}
+  header.top a{color:var(--ink);text-decoration:none;}
+  .back{display:inline-flex;align-items:center;gap:10px;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.9;}
+  .back:hover{opacity:1;}
+  .brand{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.4em;text-indent:.4em;}
+
+  section{padding:clamp(56px,9vh,110px) clamp(22px,6vw,60px);}
+  .wrap{max-width:var(--maxw);margin:0 auto;}
+  .wide{max-width:1180px;margin:0 auto;}
+  .eyebrow{display:inline-flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.34em;
+    text-transform:uppercase;color:var(--gold);margin-bottom:26px;}
+  .eyebrow::before{content:"";width:30px;height:1px;background:var(--gold);opacity:.7;}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:300;line-height:.98;font-size:clamp(40px,6.4vw,82px);letter-spacing:.01em;}
+  h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(30px,4.4vw,52px);line-height:1.04;}
+  h2 em{font-style:italic;color:var(--gold);}
+  h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(21px,2.4vw,27px);line-height:1.1;}
+  p{color:var(--ink-dim);font-weight:300;font-size:clamp(15px,1.4vw,17.5px);}
+  .lead{color:var(--ink);font-size:clamp(17px,1.8vw,21px);max-width:62ch;}
+  .muted{color:var(--ink-dim);} strong{color:var(--ink);font-weight:500;}
+
+  .hero{padding-top:clamp(120px,18vh,180px);}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:24px;}
+  .chip{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);
+    border:1px solid rgba(188,213,230,.3);border-radius:30px;padding:6px 13px;}
+  .chip.status{color:#0a0a14;background:var(--gold);border-color:var(--gold);font-weight:500;}
+  .subtitle{margin-top:26px;max-width:60ch;}
+  .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:48px;padding-top:30px;border-top:1px solid var(--line);}
+  @media(max-width:680px){.meta{grid-template-columns:repeat(2,1fr);gap:24px 18px;}}
+  .meta .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px;}
+  .meta .v{font-size:15px;color:var(--ink);}
+
+  figure{margin:40px 0 8px;}
+  figure img{width:100%;display:block;border-radius:16px;border:1px solid var(--line);background:#0c0b18;}
+  figcaption{margin-top:14px;font-size:12.5px;color:var(--ink-dim);letter-spacing:.02em;}
+  .shot{box-shadow:0 30px 80px rgba(0,0,0,.5);}
+  .browser{border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.5);background:#0c0b18;}
+  .browser .topbar{display:flex;align-items:center;gap:7px;padding:12px 16px;background:#15131f;border-bottom:1px solid var(--line);}
+  .browser .topbar i{width:10px;height:10px;border-radius:50%;background:#3a3550;display:block;}
+  .browser img{border:none;border-radius:0;box-shadow:none;}
+
+  .triad{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:18px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  @media(max-width:760px){.triad{grid-template-columns:1fr;}}
+  .triad>div{background:#0c0b18;padding:30px 26px;}
+  .triad .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,4vw,56px);margin-top:14px;}
+  @media(max-width:760px){.cols{grid-template-columns:1fr;gap:30px;}}
+
+  ul.clean{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:12px;}
+  ul.clean li{position:relative;padding-left:26px;color:var(--ink);font-size:16px;}
+  ul.clean li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:50%;background:var(--gold);}
+
+  /* reframe */
+  .reframe{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;margin-top:18px;}
+  @media(max-width:760px){.reframe{grid-template-columns:1fr;}.reframe .arr{transform:rotate(90deg);justify-self:start;}}
+  .reframe .box{padding:26px;border-radius:16px;border:1px dashed var(--line);}
+  .reframe .box.to{border-style:solid;border-color:rgba(243,201,135,.5);background:var(--panel);}
+  .reframe .box .t{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px;}
+  .reframe .box.from .t{color:var(--ink-dim);} .reframe .box.to .t{color:var(--gold);}
+  .reframe .box p{color:var(--ink);} .reframe .arr{font-size:22px;color:var(--gold);}
+
+  /* occupancy buckets */
+  .buckets{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px;}
+  @media(max-width:680px){.buckets{grid-template-columns:1fr;}}
+  .bucket{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;}
+  .bucket .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px;}
+  .bucket .lvl{font-size:12px;letter-spacing:.16em;text-transform:uppercase;}
+  .bucket .rng{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--ink);margin-top:12px;}
+  .bucket p{font-size:13.5px;margin-top:8px;}
+
+  /* 2x2 recommendation matrix */
+  .matrix{display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:12px;margin-top:34px;align-items:stretch;}
+  @media(max-width:680px){.matrix{grid-template-columns:1fr;grid-template-rows:none;}.maxis{display:none;}}
+  .maxis{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);display:flex;align-items:center;justify-content:center;text-align:center;}
+  .maxis.v{writing-mode:vertical-rl;transform:rotate(180deg);}
+  .cell{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 22px;}
+  .cell .case{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px;}
+  .cell h4{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:18px;color:var(--ink);margin-bottom:10px;}
+  .cell .recs{display:flex;flex-wrap:wrap;gap:7px;}
+  .cell .recs span{font-size:11px;padding:5px 11px;border-radius:30px;border:1px solid var(--line);color:var(--ink);}
+  .cell.good{border-color:rgba(169,214,176,.4);}
+  .cell.good .recs span{border-color:rgba(169,214,176,.5);color:var(--green);}
+  .rec-redDeal{color:var(--rose)!important;border-color:var(--rose)!important;}
+  .rec-sl{color:var(--gold)!important;border-color:rgba(243,201,135,.5)!important;}
+  .rec-rise{color:var(--mist)!important;border-color:rgba(188,213,230,.5)!important;}
+  .rec-revmax{color:#d9a6e0!important;border-color:rgba(217,166,224,.5)!important;}
+
+  /* feature decisions */
+  .decision{display:grid;grid-template-columns:1fr;gap:18px;margin-top:46px;}
+  .decision .txt .num{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);}
+  .decision .txt h3{margin:8px 0 12px;}
+  .decision .txt p{color:var(--ink);max-width:64ch;}
+
+  .note{margin-top:40px;padding:26px 30px;border-radius:16px;background:var(--panel);border:1px solid var(--line);}
+  .note .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+  .note p{color:var(--ink);}
+
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px;}
+  @media(max-width:680px){.metrics{grid-template-columns:1fr;}}
+  .metric{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:30px 26px;}
+  .metric .val{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(34px,4.4vw,50px);line-height:1.02;color:var(--ink);}
+  .metric .lab{margin-top:14px;font-size:14px;color:var(--ink);}
+  .metric .src{margin-top:10px;font-size:11px;color:var(--ink-dim);letter-spacing:.04em;}
+
+  .reflect{display:flex;flex-direction:column;gap:1px;margin-top:18px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .reflect>div{background:#0c0b18;padding:30px 30px;}
+  .reflect .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+  .reflect p{color:var(--ink);font-size:16.5px;}
+
+  footer{padding:clamp(70px,12vh,130px) clamp(22px,6vw,60px) 80px;border-top:1px solid var(--line);text-align:center;}
+  footer h2{margin-bottom:10px;}
+  .foot-links{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-top:34px;}
+  .foot-links a{color:var(--ink-dim);text-decoration:none;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;transition:color .3s;}
+  .foot-links a:hover{color:var(--gold);}
+  .foot-meta{margin-top:40px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,236,223,.4);}
+
+  /* placeholder (until a real screenshot is dropped in) */
+  .ph{width:100%;aspect-ratio:16/8;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;
+    background:repeating-linear-gradient(135deg,rgba(255,255,255,.02) 0 14px,transparent 14px 28px),var(--panel);}
+  .ph span{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim);}
+  .ph .lbl{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(16px,2vw,22px);color:var(--mist);}
+
+  /* heuristic evaluation */
+  .heur-sum{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;}
+  .heur-sum span{font-size:11px;letter-spacing:.06em;color:var(--ink);background:var(--panel);
+    border:1px solid var(--line);border-radius:30px;padding:8px 14px;}
+  .heur-sum span b{color:var(--gold);font-weight:600;}
+  .heuristics{margin-top:30px;border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .heur{display:grid;grid-template-columns:230px 1fr 92px;gap:22px;align-items:start;padding:22px 24px;border-top:1px solid var(--line);}
+  .heur:first-child{border-top:none;}
+  @media(max-width:760px){.heur{grid-template-columns:1fr;gap:8px;}}
+  .heur .hn{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--ink);line-height:1.15;}
+  .heur .hn small{display:block;font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin-top:6px;}
+  .heur .hd{font-size:14.5px;color:var(--ink-dim);line-height:1.6;}
+  .heur .hd b{color:var(--ink);font-weight:500;}
+  .heur .sev{justify-self:end;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;padding:5px 11px;border-radius:30px;white-space:nowrap;height:fit-content;}
+  @media(max-width:760px){.heur .sev{justify-self:start;}}
+  .sev.high{color:var(--rose);border:1px solid var(--rose);}
+  .sev.med{color:var(--gold);border:1px solid rgba(243,201,135,.5);}
+
+  .rv{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform 1s cubic-bezier(.16,.8,.26,1);}
+  .rv.show{opacity:1;transform:none;}
+
+  /* next project */
+  .next-proj{display:block;text-decoration:none;color:var(--ink);border-top:1px solid var(--line);
+    padding:clamp(50px,9vh,100px) clamp(22px,6vw,60px);transition:background .5s ease;}
+  .next-proj:hover{background:rgba(255,255,255,.03);}
+  .next-proj .row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap;}
+  .next-proj .np-k{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+  .next-proj h2{transition:transform .5s cubic-bezier(.16,.8,.26,1);}
+  .next-proj:hover h2{transform:translateX(14px);}
+  .next-proj .np-arrow{font-size:clamp(40px,6vw,74px);color:var(--ink-dim);transition:transform .5s cubic-bezier(.16,.8,.26,1),color .4s;}
+  .next-proj:hover .np-arrow{transform:translateX(14px);color:var(--gold);}
+
+  /* ===== persuasive-structure additions ===== */
+  .eyebrow .no{font-variant-numeric:tabular-nums;}
+
+  /* sticky section mini-nav (scroll-spy) */
+  .section-nav{position:fixed;top:0;left:0;width:100%;z-index:30;display:flex;justify-content:center;gap:2px;
+    padding:12px clamp(14px,4vw,30px);background:rgba(10,10,20,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);transform:translateY(-102%);opacity:0;
+    transition:transform .5s cubic-bezier(.16,.8,.26,1),opacity .4s ease;flex-wrap:wrap;}
+  .section-nav.visible{transform:none;opacity:1;}
+  .section-nav a{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-dim);text-decoration:none;
+    padding:7px 12px;border-radius:30px;transition:color .3s,background .3s;white-space:nowrap;}
+  .section-nav a:hover{color:var(--ink);}
+  .section-nav a[aria-current="true"]{color:#0a0a14;background:var(--gold);}
+  @media(max-width:760px){.section-nav{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+    .section-nav::-webkit-scrollbar{display:none;}}
+
+  /* snapshot outcome band */
+  .outcome{display:flex;align-items:center;gap:clamp(22px,4vw,48px);margin-top:44px;flex-wrap:wrap;}
+  .outcome .big{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(60px,10vw,116px);line-height:.85;color:var(--gold);}
+  .outcome .oc{display:flex;flex-direction:column;gap:16px;}
+  .outcome .oc .lbl{font-size:15.5px;color:var(--ink);max-width:28ch;line-height:1.4;}
+  .outcome .oc .subs{display:flex;gap:26px;flex-wrap:wrap;}
+  .outcome .oc .subs span{font-size:13px;color:var(--ink-dim);}
+  .outcome .oc .subs b{color:var(--ink);font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-right:7px;}
+
+  /* role & scope */
+  .scope{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px;}
+  @media(max-width:680px){.scope{grid-template-columns:1fr;}}
+  .scope .col{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 26px;}
+  .scope .col.owned{border-color:rgba(243,201,135,.45);background:linear-gradient(180deg,rgba(243,201,135,.05),transparent);}
+  .scope .col .h{font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;}
+  .scope .col.owned .h{color:var(--gold);} .scope .col.team .h{color:var(--mist);}
+
+  /* discovery insights */
+  .insights{margin-top:34px;display:flex;flex-direction:column;gap:16px;}
+  .insight{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:start;
+    background:#0c0b18;border:1px solid var(--line);border-radius:16px;padding:26px 28px;}
+  @media(max-width:680px){.insight{grid-template-columns:1fr;gap:12px;}}
+  .insight .tag{font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:6px 11px;border-radius:30px;
+    border:1px solid currentColor;justify-self:start;white-space:nowrap;height:fit-content;}
+  .tag.model{color:var(--mist);} .tag.timing{color:var(--rose);} .tag.context{color:var(--gold);}
+  .insight .in-body p{color:var(--ink);font-size:16.5px;}
+  .insight .in-body .chg{margin-top:12px;font-size:13.5px;color:var(--gold);display:flex;align-items:baseline;gap:8px;}
+  .insight .in-body .chg::before{content:"→";}
+
+  /* framing — the spine */
+  .framing h2{font-size:clamp(34px,5.4vw,66px);}
+  .spine{border-left:2px solid var(--gold);padding-left:clamp(20px,4vw,44px);margin-top:8px;}
+  .bets{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:38px;}
+  @media(max-width:680px){.bets{grid-template-columns:1fr;}}
+  .bet-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;}
+  .bet-card .n{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);}
+  .bet-card h3{font-size:18px;margin:6px 0 8px;}
+  .bet-card p{font-size:14px;}
+  .pivot-note{margin-top:36px;padding:30px 34px;border-radius:16px;
+    background:radial-gradient(120% 140% at 0% 0%,rgba(243,201,135,.1),transparent 60%),var(--panel);
+    border:1px solid rgba(243,201,135,.4);}
+  .pivot-note .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+  .pivot-note p{color:var(--ink);font-size:clamp(17px,2vw,21px);font-weight:300;}
+
+  /* explorations & tradeoffs */
+  .tradeoff-head{margin-top:30px;font-family:'Cormorant Garamond',serif;font-weight:300;
+    font-size:clamp(24px,3.4vw,38px);color:var(--ink);line-height:1.2;max-width:26ch;}
+  .tradeoff-head em{font-style:italic;color:var(--gold);}
+  .options{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px;align-items:stretch;}
+  @media(max-width:760px){.options{grid-template-columns:1fr;}}
+  .option{background:#0c0b18;border:1px solid var(--line);border-radius:16px;padding:26px 24px;display:flex;flex-direction:column;gap:12px;}
+  .option.chosen{border-color:var(--gold);background:linear-gradient(180deg,rgba(243,201,135,.07),transparent);}
+  .verdict{font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:5px 11px;border-radius:30px;align-self:flex-start;}
+  .verdict.rejected{color:var(--rose);border:1px solid var(--rose);}
+  .verdict.chosen{color:#0a0a14;background:var(--gold);font-weight:500;}
+  .option h3{font-size:20px;}
+  .option .bet{font-size:14px;color:var(--ink-dim);} .option .bet b{color:var(--mist);font-weight:500;}
+  .option .why{font-size:14.5px;color:var(--ink);margin-top:auto;} .option .why b{color:var(--gold);font-weight:500;}
+
+  /* solution decision blocks + "solves" chip */
+  .solves{display:inline-block;margin:2px 0 8px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--mist);border:1px solid rgba(188,213,230,.35);border-radius:30px;padding:5px 11px;}
+  .sol-list{display:flex;flex-direction:column;gap:26px;margin-top:36px;}
+  .sol-item .num{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);}
+  .sol-item h3{margin:10px 0 10px;}
+  .sol-item p{color:var(--ink);max-width:64ch;}
+
+  /* light-mode niceties for new components */
+  html[data-theme="light"] .section-nav{background:rgba(246,242,232,.82);border-bottom-color:var(--line);}
+  html[data-theme="light"] .section-nav a[aria-current="true"]{color:#f6f2e8;background:#221c38;}
+  html[data-theme="light"] .insight,
+  html[data-theme="light"] .option{background:#faf6ec;}
+  html[data-theme="light"] .verdict.chosen{color:#fff;}
+</style>
+<link rel="stylesheet" href="../enhance.css" />
+</head>
+<body>
+  <div class="aura"></div>
+  <div class="grain"></div>
+  <div class="bar" id="bar"></div>
+
+  <header class="top">
+    <a class="back" href="../index.html#work">← All work</a>
+    <a class="brand" href="../index.html">SWARAJ</a>
+  </header>
+
+  <!-- sticky section nav (scroll-spy) -->
+  <nav class="section-nav" id="sectionNav" aria-label="Case study sections">
+    <a href="#context">Context</a>
+    <a href="#role">Role</a>
+    <a href="#discovery">Discovery</a>
+    <a href="#framing">Framing</a>
+    <a href="#tradeoffs">Tradeoffs</a>
+    <a href="#solution">Solution</a>
+    <a href="#impact">Impact</a>
+    <a href="#reflection">Reflection</a>
+  </nav>
+
+  <main>
+
+  <!-- 1 · SNAPSHOT -->
+  <section class="hero" aria-labelledby="snap-h">
+    <div class="wide rv">
+      <div class="chips">
+        <span class="chip status">Shipped · 2025</span>
+        <span class="chip">Product Design</span>
+        <span class="chip">Dashboard</span>
+        <span class="chip">Data Viz</span>
+        <span class="chip">Design System</span>
+      </div>
+      <div class="eyebrow">redPro v3 · RPW Homepage</div>
+      <h1 id="snap-h" style="max-width:15ch;">A homepage that tells operators what to do next</h1>
+      <p class="lead subtitle">The old dashboard was a wall of metrics — operators could read a hundred numbers but not tell which service was in trouble, or what to do about it. I turned it into a to-do list.</p>
+
+      <div class="outcome">
+        <div class="big">1 tap</div>
+        <div class="oc">
+          <div class="lbl">from spotting an at-risk service to a pre-filled fix — pricing, ads, ratings, all on the homepage.</div>
+          <div class="subs">
+            <span><b>3–5</b>at-risk services triaged on landing</span>
+            <span><b>4→1</b>growth products on one surface</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div><div class="k">My role</div><div class="v">Senior UX Designer — end-to-end</div></div>
+        <div><div class="k">Product</div><div class="v">redPro v3 · RPW</div></div>
+        <div><div class="k">Surface</div><div class="v">Operator home dashboard</div></div>
+        <div><div class="k">Users</div><div class="v">Bus operators</div></div>
+      </div>
+      <figure>
+        <div class="browser">
+          <div class="topbar"><i></i><i></i><i></i></div>
+          <img loading="lazy" decoding="async" src="../assets/case-studies/rpw-home/homepage.png" alt="Redesigned RPW operator homepage — today's sales, a services-that-need-attention tracker with recommendations, a performance chart, and a For You section" />
+        </div>
+        <figcaption>The revamped homepage — a priority tracker up top, recommendations that lead straight to action, a performance trend, and a reorganised “For You” shelf at the bottom.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 2 · CONTEXT & PROBLEM -->
+  <section id="context" aria-labelledby="context-h">
+    <div class="wrap rv">
+      <div class="eyebrow"><span class="no">01</span> · Context &amp; problem</div>
+      <h2 id="context-h">Plenty of data,<br/><em>no direction</em></h2>
+      <p class="lead" style="margin-top:24px;">The RPW homepage is where every bus operator on redPro starts their day. But it showed them everything at once and prioritised nothing — while the levers that could actually grow their business sat on other pages entirely. Four questions went unanswered:</p>
+      <ul class="clean" style="margin-top:34px;">
+        <li><strong>Which service needs me today?</strong> Nothing ranked or flagged the departures at risk — operators had to scan and infer.</li>
+        <li><strong>Is this number good or bad?</strong> No competitor benchmark meant an occupancy figure carried no context.</li>
+        <li><strong>So what do I do?</strong> Even when a problem was visible, the levers to fix it — pricing, ads, ratings — lived on other pages entirely.</li>
+        <li><strong>What's worth my attention?</strong> Long-running shelves and promos competed with urgent, time-sensitive decisions for the same space.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- BEFORE: EXISTING DASHBOARD + HEURISTIC AUDIT -->
+  <section>
+    <div class="wide rv">
+      <div class="eyebrow">The starting point</div>
+      <h2 class="wrap" style="padding:0;">The dashboard we<br/><em>inherited</em></h2>
+      <p class="lead wrap" style="padding:0;margin-top:24px;">Before redesigning, I ran a heuristic evaluation of the live dashboard. The page wasn't missing data — it was missing hierarchy, context and a path to action. Promotions sat above operations, internal jargon leaked into the UI, and “what needs me now” was scattered between an inline feed and a separate Action centre.</p>
+      <figure>
+        <div class="browser">
+          <div class="topbar"><i></i><i></i><i></i></div>
+          <img loading="lazy" decoding="async" src="../assets/case-studies/rpw-home/existing-dashboard.png" alt="The existing RPW operator dashboard before the revamp — today's sales, a For You promo row, customer feedback blocks, and a separate Action centre panel"
+               onerror="this.style.display='none';this.parentNode.querySelector('.ph').style.display='flex';" />
+          <div class="ph"><span>Before</span><div class="lbl">Existing RPW dashboard — drop the screenshot in to replace this</div></div>
+        </div>
+        <figcaption>The existing dashboard — every section competing for the same attention, with promotional cards (“For You”) occupying prime space above the operator's actual performance.</figcaption>
+      </figure>
+
+      <div class="wrap" style="padding:0;">
+        <div class="eyebrow" style="margin-top:54px;">Heuristic evaluation · Nielsen's 10</div>
+        <p class="lead">Six findings shaped the redesign — each mapped to a usability heuristic and a severity.</p>
+        <div class="heur-sum">
+          <span><b>6</b> heuristics breached</span>
+          <span><b>4</b> high-severity</span>
+          <span><b>1</b> screen, no clear priority</span>
+        </div>
+
+        <div class="heuristics">
+          <div class="heur">
+            <div class="hn">Aesthetic &amp; minimalist design<small>Heuristic 8</small></div>
+            <div class="hd"><b>Everything weighs the same.</b> Today's sales, two “Customer Feedback” blocks, a “For You” promo row and a side Action centre all compete equally — no visual hierarchy tells the operator where to look first.</div>
+            <div class="sev high">High</div>
+          </div>
+          <div class="heur">
+            <div class="hn">Match with the real world<small>Heuristic 2</small></div>
+            <div class="hd"><b>Internal jargon leaks through.</b> “No lat/long available for 77 BPs &amp; 30 DPs”, “270 PAX impacted”, “DBD” — language from internal systems, not the words a bus operator uses.</div>
+            <div class="sev high">High</div>
+          </div>
+          <div class="heur">
+            <div class="hn">Recognition over recall<small>Heuristic 6</small></div>
+            <div class="hd"><b>Numbers without a benchmark.</b> 148 seats, ₹2,21,972 revenue, a 3.5 rating — but nothing says whether that's good or bad. The operator has to remember what “normal” looks like.</div>
+            <div class="sev high">High</div>
+          </div>
+          <div class="heur">
+            <div class="hn">Visibility of system status<small>Heuristic 1</small></div>
+            <div class="hd"><b>Priority is hidden.</b> What needs action is split between a collapsible “Action centre” (57% completed) and inline blocks — the most urgent service of the day is never surfaced at a glance.</div>
+            <div class="sev high">High</div>
+          </div>
+          <div class="heur">
+            <div class="hn">Consistency &amp; standards<small>Heuristic 4</small></div>
+            <div class="hd"><b>Six ways to say “act”.</b> “Take Action”, “View List”, “READ”, “More Details”, “See Benefits”, “Start Now” — inconsistent CTA labels, card styles and colour use across one screen.</div>
+            <div class="sev med">Medium</div>
+          </div>
+          <div class="heur">
+            <div class="hn">Flexibility &amp; efficiency of use<small>Heuristic 7</small></div>
+            <div class="hd"><b>No bridge from insight to action.</b> A low rating or a tracking gap is shown here, but the fix lives on another page — there's no shortcut from spotting a problem to resolving it.</div>
+            <div class="sev med">Medium</div>
+          </div>
+        </div>
+
+        <div class="note"><div class="t">From audit to direction</div><p>Each finding became a design goal: impose hierarchy (H8), speak the operator's language (H2), benchmark every metric (H6), surface the day's priority first (H1), unify the action vocabulary (H4), and put the fix one tap from the problem (H7).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · ROLE & SCOPE -->
+  <section id="role" aria-labelledby="role-h">
+    <div class="wrap rv">
+      <div class="eyebrow"><span class="no">02</span> · Role &amp; scope</div>
+      <h2 id="role-h">What I <em>owned</em></h2>
+      <p class="lead" style="margin-top:24px;">I led the homepage end-to-end — the audit, the triage-first bet, the recommendation logic and the final UI — working closely with product, data science and engineering to keep every recommendation explainable and buildable.</p>
+      <div class="scope">
+        <div class="col owned"><div class="h">Mine, end-to-end</div>
+          <ul class="clean" style="margin-top:0;">
+            <li>Heuristic audit of the live dashboard.</li>
+            <li>The triage-first structure and the occupancy × rank recommendation matrix.</li>
+            <li>All layout, hierarchy and the “For You” reorganisation.</li>
+            <li>Recommendation-card patterns, contributed to redPro v3's system.</li>
+          </ul>
+        </div>
+        <div class="col team"><div class="h">Partnered with</div>
+          <ul class="clean" style="margin-top:0;">
+            <li><strong>Product</strong> — feature prioritisation (P0–P2), business goals.</li>
+            <li><strong>Data science</strong> — occupancy buckets, SRP-rank logic, projections.</li>
+            <li><strong>Engineering</strong> — HubbleUI feasibility, the 4-hour data reality.</li>
+            <li><strong>Growth teams</strong> — Rise, revMax, Sponsored Ads &amp; redDeal owners.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · DISCOVERY -->
+  <section id="discovery" aria-labelledby="discovery-h">
+    <div class="wrap rv">
+      <div class="eyebrow"><span class="no">03</span> · Discovery</div>
+      <h2 id="discovery-h">Three reads that<br/><em>set the direction</em></h2>
+      <p class="lead" style="margin-top:24px;">From stakeholder feedback and three months of intervention data, three findings did the real steering.</p>
+      <div class="insights">
+        <div class="insight"><span class="tag timing">Timing</span><div class="in-body"><p>At any moment, an operator cares most about services departing <strong>today (DBD 0)</strong> and <strong>tomorrow (DBD 1)</strong> — not last month's averages.</p><div class="chg">Anchored the whole page on a two-tab, today-first tracker.</div></div></div>
+        <div class="insight"><span class="tag model">Mental model</span><div class="in-body"><p>Operators triage by the <strong>service at risk</strong>, ranked worst-first — they don't read a dashboard top to bottom.</p><div class="chg">Ranked services by lowest occupancy; demoted everything healthy.</div></div></div>
+        <div class="insight"><span class="tag context">Context &amp; action</span><div class="in-body"><p>A metric with no benchmark and no next step is noise. Operators wanted <strong>“is this good or bad — and what do I do?”</strong></p><div class="chg">Paired every diagnosis with a benchmark and a recommended fix.</div></div></div>
+      </div>
+
+      <div class="eyebrow" style="margin-top:54px;">How occupancy is read</div>
+      <p class="lead">Occupancy is measured at the whole-service level (Omega/GDS, not just redBus seats) and bucketed so a glance tells the story:</p>
+      <div class="buckets">
+        <div class="bucket"><span class="lvl"><span class="dot" style="background:var(--rose)"></span>Low</span><div class="rng">≤ 50%</div><p>At risk — surfaced first, with the strongest recommendations.</p></div>
+        <div class="bucket"><span class="lvl"><span class="dot" style="background:var(--gold)"></span>Medium</span><div class="rng">50–80%</div><p>Watch — room to push occupancy and rank.</p></div>
+        <div class="bucket"><span class="lvl"><span class="dot" style="background:var(--green)"></span>High</span><div class="rng">&gt; 80%</div><p>Healthy — protect the price, no nudge needed.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · FRAMING & STRATEGY (spine) -->
+  <section id="framing" class="framing" aria-labelledby="framing-h">
+    <div class="wrap rv">
+      <div class="eyebrow"><span class="no">04</span> · Framing &amp; strategy</div>
+      <h2 id="framing-h">The bet: don't show more —<br/>show <em>what to do</em></h2>
+      <div class="pivot-note">
+        <div class="t">The reframe everything hinged on</div>
+        <p>The brief read like a data gap — build operators a richer dashboard. It wasn't. It was a <strong>hierarchy and action</strong> gap: operators needed the few services that need action <strong>surfaced first</strong>, in their language, each with a fix one tap away.</p>
+      </div>
+      <div class="spine">
+        <div class="reframe">
+          <div class="box from"><div class="t">Obvious read</div><p>Show every metric we have and let operators find what matters.</p></div>
+          <div class="arr">→</div>
+          <div class="box to"><div class="t">The bet I made</div><p>Surface only the at-risk services, benchmarked, each with one recommended fix. Demote everything else — promos included.</p></div>
+        </div>
+      </div>
+      <div class="eyebrow" style="margin-top:48px;margin-bottom:0;">Four principles I designed against</div>
+      <div class="bets">
+        <div class="bet-card"><div class="n">01</div><h3>Lead with what's wrong</h3><p>Triage before overview — the first thing on screen is the service that needs action today.</p></div>
+        <div class="bet-card"><div class="n">02</div><h3>Never a number alone</h3><p>Every metric ships with a competitor benchmark. Context is the product, not the raw value.</p></div>
+        <div class="bet-card"><div class="n">03</div><h3>Every problem, a fix</h3><p>A flag without an explainable, recommended action is just anxiety — pair each with a next step.</p></div>
+        <div class="bet-card"><div class="n">04</div><h3>Urgent over evergreen</h3><p>Time-sensitive decisions earn the top; promos and shelves move below the fold.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · EXPLORATIONS & TRADEOFFS -->
+  <section id="tradeoffs" aria-labelledby="tradeoffs-h">
+    <div class="wrap rv">
+      <div class="eyebrow"><span class="no">05</span> · Explorations &amp; tradeoffs</div>
+      <h2 id="tradeoffs-h">How the recommendations<br/><em>get decided</em></h2>
+      <p class="tradeoff-head">I chose a <em>rules-based, explainable matrix</em> over a generic “recommended for you” feed — because operators only trust a nudge they can see the reason for.</p>
+      <div class="options">
+        <div class="option"><span class="verdict rejected">Rejected</span><h3>A · Show everything</h3><p class="bet"><b>Bet:</b> more metrics, more control for power users.</p><p class="why"><b>Why not:</b> the status quo — no hierarchy, no action. The very problem we started with.</p></div>
+        <div class="option"><span class="verdict rejected">Rejected</span><h3>B · Generic “for you” feed</h3><p class="bet"><b>Bet:</b> a black-box model ranks what to promote.</p><p class="why"><b>Why not:</b> unexplainable. Operators can't see why they're being sold something — trust erodes fast.</p></div>
+        <div class="option chosen"><span class="verdict chosen">Chosen</span><h3>C · Rules matrix</h3><p class="bet"><b>Bet:</b> recommendations tied to two readable axes.</p><p class="why"><b>Result:</b> every card is explainable from the data on screen — occupancy × search rank.</p></div>
+      </div>
+      <p class="lead" style="margin-top:44px;">The matrix maps a service's <strong>occupancy</strong> against its <strong>SRP rank</strong> (search visibility) and surfaces exactly the levers that fit — tapping one opens the flow pre-filled.</p>
+      <div class="matrix">
+        <div></div>
+        <div class="maxis">SRP rank — Low (poor visibility)</div>
+        <div class="maxis">SRP rank — High (good visibility)</div>
+        <div class="maxis v">Occupancy — Low</div>
+        <div class="cell"><div class="case">Case 1 · empty &amp; unseen</div><h4>Fill seats &amp; get found</h4><div class="recs"><span class="rec-redDeal">redDeal</span><span class="rec-sl">Sponsored Ads</span><span class="rec-rise">Rise</span></div></div>
+        <div class="cell"><div class="case">Case 2 · empty but visible</div><h4>Win on price</h4><div class="recs"><span class="rec-redDeal">redDeal</span><span class="rec-revmax">revMax</span></div></div>
+        <div class="maxis v">Occupancy — High</div>
+        <div class="cell"><div class="case">Case 3 · full but unseen</div><h4>Buy visibility</h4><div class="recs"><span class="rec-sl">Sponsored Ads</span></div></div>
+        <div class="cell good"><div class="case">Case 4 · full &amp; visible</div><h4>Good performance</h4><div class="recs"><span>No action needed</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · SOLUTION -->
+  <section id="solution" aria-labelledby="solution-h">
+    <div class="wide rv">
+      <div class="eyebrow wrap" style="padding:0;"><span class="no">06</span> · Solution</div>
+      <h2 class="wrap" id="solution-h" style="padding:0;">Each part answers one<br/>operator <em>question</em></h2>
+      <p class="lead wrap" style="padding:0;margin-top:24px;">Not a screen gallery — every part earns its place by resolving a question operators actually ask. The worst-performing departure is always the first thing they see.</p>
+      <figure>
+        <img class="shot" loading="lazy" decoding="async" src="../assets/case-studies/rpw-home/tracker.png" alt="Services that need attention — ranked service list, a benchmarked service-detail panel, and context-aware recommendation cards" />
+        <figcaption>“Services that need attention” — ranked by occupancy, diagnosed against competitors, and paired with recommendations that carry their own projected upside.</figcaption>
+      </figure>
+
+      <div class="sol-list wrap" style="padding:0;">
+        <div class="sol-item"><div class="num">01</div><span class="solves">Answers: “which service needs me today?”</span><h3>The DBD 0/1 tracker leads</h3><p>Two tabs — today and tomorrow — with services ranked worst-occupancy first. The at-risk departure is the first thing an operator sees, before any promo or shelf.</p></div>
+        <div class="sol-item"><div class="num">02</div><span class="solves">Answers: “is this good or bad?”</span><h3>Benchmarked, not raw</h3><p>Each service is diagnosed against competitors — occupancy, selling-price range, SRP-rank bucket and rating — with a single “compare with competitors” path. The comparison is what makes a number mean something.</p></div>
+        <div class="sol-item"><div class="num">03</div><span class="solves">Answers: “so what do I do?”</span><h3>A recommended fix, with its upside</h3><p>Every flag carries one recommended action from the matrix, stating its projected upside before the operator commits — “up to 50 ranks”, a 15% discount, 45 sponsored days — and opens the flow pre-filled, never recommending what's already configured.</p></div>
+        <div class="sol-item"><div class="num">04</div><span class="solves">Answers: “what's worth my attention?”</span><h3>Urgent on top, “For You” below</h3><p>Time-sensitive decisions earn the top; a performance trend lets operators zoom out; and the “For You” shelf — seasonal sales, Rise / redDeals, Volvo, staff training — moves to the bottom, present but never competing with the day's priorities.</p></div>
+      </div>
+      <div class="note wrap" style="padding:0;"><div class="t">Four levers, one home</div><p>redDeal, Sponsored Ads, Rise and revMax — four growth products that used to live apart, now surfaced exactly when a service's data calls for them. The homepage becomes an activation surface, not just a report.</p></div>
+    </div>
+  </section>
+
+  <!-- 8 · VALIDATION & IMPACT -->
+  <section id="impact" aria-labelledby="impact-h">
+    <div class="wrap rv">
+      <div class="eyebrow"><span class="no">07</span> · Validation &amp; impact</div>
+      <h2 id="impact-h">From reporting to<br/><em>acting</em></h2>
+      <p class="lead" style="margin-top:24px;">The redesign reshapes what the homepage is <em>for</em> — and what it's built to move. Every recommendation traces back to a heuristic it fixes, so the argument holds before a single metric lands.</p>
+      <div class="metrics">
+        <div class="metric"><div class="val">3–5</div><div class="lab">At-risk services surfaced and ranked the moment an operator lands — no scanning</div><div class="src">DBD 0 / DBD 1 tracker</div></div>
+        <div class="metric"><div class="val">1 tap</div><div class="lab">From spotting an underperforming service to a pre-filled fix</div><div class="src">Context-aware recommendation cards</div></div>
+        <div class="metric"><div class="val">4 → 1</div><div class="lab">redDeal, Sponsored Ads, Rise &amp; revMax brought onto a single activation surface</div><div class="src">Cross-product recommendations</div></div>
+      </div>
+      <ul class="clean" style="margin-top:36px;">
+        <li>The homepage becomes the front door for monetisation products — surfacing Rise and revMax lead-gen exactly when a service's data makes the case.</li>
+        <li>Benchmarked diagnosis (occupancy, SRP rank, rating vs competitors) turns raw metrics into decisions an operator can actually act on.</li>
+        <li>Designed against clear north-star metrics — engagement with recommendations, action-completion rate, and product activations — tracked post-launch.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 9 · REFLECTION -->
+  <section id="reflection" aria-labelledby="reflection-h">
+    <div class="wrap rv">
+      <div class="eyebrow"><span class="no">08</span> · Reflection</div>
+      <h2 id="reflection-h" style="color:var(--ink);margin-bottom:8px;">If I ran it <em>again</em></h2>
+      <div class="reflect">
+        <div><div class="t">The core move</div><p>Editing, not adding. The win wasn't new data — it was choosing a single organising question (“what needs me today?”) and letting it demote everything that didn't answer it.</p></div>
+        <div><div class="t">The hardest part</div><p>Designing the recommendation matrix so it never felt arbitrary. Every card had to be explainable — tied to occupancy and rank — and had to carry an honest projection, or operators would stop trusting it.</p></div>
+        <div><div class="t">What's next</div><p>Closing the loop: showing operators the realised impact after they act on a recommendation, so the homepage learns to earn the next tap.</p></div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- NEXT PROJECT -->
+  <a class="next-proj rv" href="marketplace-hygiene-dashboard.html">
+    <div class="row">
+      <div>
+        <div class="np-k">Next project</div>
+        <h2>Marketplace Hygiene <em>Dashboard</em></h2>
+      </div>
+      <div class="np-arrow">→</div>
+    </div>
+  </a>
+
+  <!-- FOOTER -->
+  <footer class="rv">
+    <div class="eyebrow" style="justify-content:center;">Thanks for reading</div>
+    <h2>Let's build something <em>that lasts</em></h2>
+    <p class="muted" style="max-width:46ch;margin:14px auto 0;">Swaraj Kumar · Senior UX Designer</p>
+    <div class="foot-links">
+      <a href="mailto:swaraj.kumar0103@gmail.com">swaraj.kumar0103@gmail.com</a>
+      <a href="https://swaraj.design" target="_blank" rel="noopener">swaraj.design</a>
+      <a href="https://linkedin.com/in/swarajkumar" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html#work">More work</a>
+    </div>
+    <div class="foot-meta">© 2025 Swaraj Kumar · redPro v3 · RPW</div>
+  </footer>
+
+  <script>
+    const bar = document.getElementById('bar');
+    addEventListener('scroll', () => {
+      const m = document.documentElement.scrollHeight - innerHeight;
+      bar.style.width = (m > 0 ? (scrollY / m) * 100 : 0) + '%';
+    }, { passive: true });
+    const io = new IntersectionObserver((es) => {
+      es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+    // sticky section-nav: appear past the hero
+    const navEl = document.getElementById('sectionNav');
+    const heroEl = document.querySelector('.hero');
+    new IntersectionObserver(([e]) => {
+      navEl.classList.toggle('visible', !e.isIntersecting);
+    }, { rootMargin: '-70px 0px 0px 0px' }).observe(heroEl);
+
+    // scroll-spy: highlight the active section link
+    const links = [...navEl.querySelectorAll('a')];
+    const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const spy = new IntersectionObserver((es) => {
+      es.forEach(e => {
+        if (e.isIntersecting) {
+          const active = byId.get(e.target.id);
+          if (active) { links.forEach(l => l.removeAttribute('aria-current')); active.setAttribute('aria-current', 'true'); }
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    document.querySelectorAll('main section[id]').forEach(s => spy.observe(s));
+  </script>
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="../enhance.js" defer></script>
+</body>
+</html>
