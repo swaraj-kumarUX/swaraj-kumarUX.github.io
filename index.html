@@ -65,7 +65,8 @@
     justify-content:space-between;padding:26px clamp(20px,4vw,54px);
     mix-blend-mode:difference;
   }
-  .brand{font-family:'Cormorant Garamond',serif;font-size:23px;letter-spacing:.46em;text-indent:.46em;font-weight:500;}
+  .brand{font-family:'Cormorant Garamond',serif;font-size:23px;letter-spacing:.46em;text-indent:.46em;font-weight:500;
+    color:inherit;text-decoration:none;cursor:pointer;}
   .nav-links{display:flex;gap:34px;align-items:center;}
   .nav-links a{color:var(--ink);text-decoration:none;font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;opacity:.85;transition:opacity .3s;}
   .nav-links a:hover{opacity:1;}
@@ -273,7 +274,7 @@
 
   <!-- NAV -->
   <nav>
-    <div class="brand">SWARAJ&nbsp;KUMAR</div>
+    <a class="brand" href="#top" aria-label="Back to top">SWARAJ&nbsp;KUMAR</a>
     <div class="nav-links">
       <a href="#begin">Story</a>
       <a href="#maker">About</a>
@@ -513,5 +514,12 @@
   </script>
   <script type="module" src="./world.js"></script>
   <script src="enhance.js" defer></script>
+  <script>
+    // brand logo → smooth-scroll back to the top (home)
+    document.querySelector('.brand')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
 </body>
 </html>
