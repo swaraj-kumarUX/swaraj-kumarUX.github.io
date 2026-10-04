@@ -735,7 +735,8 @@ h1{margin:0;font-weight:300}
   .modular-solutions-bento__layout .modular-solutions-bento-card.modular-solutions-bento__card-agentic-commerce,
   .modular-solutions-bento__layout .modular-solutions-bento-card.modular-solutions-bento__card-issuing{aspect-ratio:400/676;max-width:400px;flex-basis:calc(33.333% - 12px)}
   .modular-solutions-bento__layout .modular-solutions-bento-card.modular-solutions-bento__card-crypto{aspect-ratio:400/676;max-width:400px;flex-basis:calc(33.333% - 8px)}
-  .modular-solutions-bento__layout .modular-solutions-bento-card.modular-solutions-bento__card-connect{aspect-ratio:1232/450;max-width:1232px;flex-basis:100%}
+  .modular-solutions-bento__layout .modular-solutions-bento-card.modular-solutions-bento__card-connect,
+  .modular-solutions-bento__layout .modular-solutions-bento-card.modular-solutions-bento__card-canvas{aspect-ratio:1232/450;max-width:1232px;flex-basis:100%}
 }
 
 
@@ -766,12 +767,14 @@ h1{margin:0;font-weight:300}
 .work-shot--c{left:7%;top:50%;width:86%}
 .work-shot--d{right:6%;top:16%;width:28%}
 .work-shot--d{left:auto}
+.work-shot--e{left:auto;right:4%;top:20%;width:52%}
 @media (max-width:939px){
   .work-card.modular-solutions-bento-card{aspect-ratio:auto;min-height:600px;max-height:none}
   .work-shot--a{left:6%;top:58%;width:56%}
   .work-shot--b{left:40%;top:66%;width:56%}
   .work-shot--c{top:56%}
   .work-shot--d{right:auto;left:22%;top:60%;width:56%}
+  .work-shot--e{right:auto;left:6%;top:62%;width:88%}
 }
 
 
@@ -810,6 +813,8 @@ h1{margin:0;font-weight:300}
 .wc--c1{left:33%;top:15%}
 .wc--c2{left:46%;top:15%}
 .wc--c3{left:37%;top:52%}
+.wc--e1{left:36%;top:60%}
+.wc--e2{left:38%;top:12%}
 @media (max-width:939px){.wc,.wc-ramp{display:none}}
 /* 940-1239px: the HubbleUI card is narrow and tall, its copy wraps long, so it
    keeps only title, tags and a bottom-anchored screenshot */
@@ -1010,6 +1015,9 @@ html.cs-locked{overflow:hidden}
 /* per-project dialog palettes */
 .cs-dialog--hubble{--cs-blue:#315ed1;--cs-teal:#0098ee}
 .cs-dialog--redpro{--cs-blue:#d84e55;--cs-teal:#1b8040}
+.cs-dialog--canvas{--cs-blue:#7a3ec8;--cs-teal:#138079}
+/* the canvas screenshot is landscape: a fitted window, centred and bleeding off the right */
+.cs-dialog--canvas .cs-window{left:8%;right:-14%;top:50%;bottom:auto;transform:translateY(-50%);border-radius:10px}
 /* extra card graphics */
 .cs-card__graphic--shot{background:linear-gradient(160deg,#f8fafd 35%,color-mix(in srgb,var(--cs-blue) 14%,#fff) 100%)}
 .cs-card__graphic--shot img{position:absolute;left:9%;top:11%;width:82%;height:auto;border-radius:6px;box-shadow:0 18px 30px -12px rgba(50,50,93,.35)}
@@ -2162,7 +2170,7 @@ button{font-family:inherit}
   <div class="section-container section-row modular-solutions-section">
     <div class="section-title">
       <h2 class="hds-heading hds-heading--lg hds-heading--inline">Work I&rsquo;ve done.</h2>
-      <p class="hds-heading modular-solutions-section__description hds-heading--lg hds-heading--subdued hds-heading--inline">Research-led design for bus operators and design teams &ndash; from reconciliation tools to design systems and dashboards.</p>
+      <p class="hds-heading modular-solutions-section__description hds-heading--lg hds-heading--subdued hds-heading--inline">Research-led design for bus operators, security admins and design teams &ndash; from reconciliation tools to design systems, dashboards and network maps.</p>
     </div>
     <div class="modular-solutions-bento">
       <div class="modular-solutions-bento__content">
@@ -2233,6 +2241,29 @@ button{font-family:inherit}
           <div class="modular-solutions-bento-card__inner">
             <div class="modular-solutions-bento-card__content">
               <div class="modular-solutions-bento-card__content-inner work-card__art"><canvas class="work-bg" data-scene="redpro" aria-hidden="true"></canvas><img class="work-shot work-shot--d" alt="" src="work/redpro-homepage.png" loading="lazy"><div class="wc wc--c1" aria-hidden="true"><div class="wc__label">Occupancy</div><div class="wc__big"><span class="slot " style="--sh:28px;--sd:7s"><span class="slot__track slot__track--4"><span>72%</span><span>78%</span><span>84%</span><span>72%</span></span></span></div></div><div class="wc wc--c2" aria-hidden="true"><div class="wc__label">Revenue / trip</div><div class="wc__big"><span class="slot " style="--sh:28px;--sd:7s"><span class="slot__track slot__track--4"><span>&#8377;8.2k</span><span>&#8377;9.1k</span><span>&#8377;9.8k</span><span>&#8377;8.2k</span></span></span></div></div><div class="wc wc--c3" aria-hidden="true"><div class="wc__label">Next up</div><span class="slot wc__next" style="--sh:22px;--sd:6.6s"><span class="slot__track slot__track--4"><span>Review Friday pricing</span><span>3 buses sitting idle</span><span>Check boarding delays</span><span>Review Friday pricing</span></span></span></div></div>
+            </div>
+          </div>
+        </a>
+        <a class="modular-solutions-bento-card modular-solutions-bento__card-canvas work-card" data-cs-open="cs-stealth-canvas" aria-haspopup="dialog" href="case-studies/stealth-canvas.html"
+          aria-label="Stealth Canvas refinement &ndash; Unisys &middot; Web &middot; 2022"
+          style="--card-grow-x:10.951111px;--card-grow-y:4px;--card-shift-x:-10.951111px;--card-shift-y:-4px">
+          <div class="modular-solutions-bento-card__dialog-entry">
+            <div class="modular-solutions-bento-card__dialog-entry-wrapper"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13.75 6.75L10.25 6.75L10.25 5L15.5 5L15.5 10.25L13.75 10.25L13.75 6.75Z"></path><path d="M6.75 10.25L5 10.25L5 15.5L10.25 15.5L10.25 13.75L6.75 13.75L6.75 10.25Z"></path></svg></div>
+          </div>
+          <div class="modular-solutions-bento-card__text">
+            <p class="work-card__meta">Unisys &middot; Web &middot; 2022</p>
+            <h3 class="hds-heading modular-solutions-bento-card__title hds-heading--md">Stealth Canvas refinement</h3>
+            <p class="work-card__desc">Making a dense network-security map readable &ndash; new icons, accessible colour, cleaner canvas.</p>
+            <ul class="work-card__tags"><li>Heuristic audit</li><li>Iconography</li><li>Accessibility</li></ul>
+          </div>
+          <div class="modular-solutions-bento-card__border">
+            <div class="modular-solutions-bento-card__border-color">
+              <div class="modular-solutions-bento-card__border-color-gradient"></div>
+            </div>
+          </div>
+          <div class="modular-solutions-bento-card__inner">
+            <div class="modular-solutions-bento-card__content">
+              <div class="modular-solutions-bento-card__content-inner work-card__art"><canvas class="work-bg" data-scene="canvas" aria-hidden="true"></canvas><img class="work-shot work-shot--e" alt="" src="work/canvas/refined-canvas.jpg" loading="lazy"><div class="wc wc--e1" aria-hidden="true"><div class="wc__label">Heuristic findings</div><div class="wc__big"><span class="slot " style="--sh:28px;--sd:7s"><span class="slot__track slot__track--4"><span>52 <small>logged</small></span><span>30 <small>not aligned</small></span><span>23 <small>elements</small></span><span>52 <small>logged</small></span></span></span></div></div><div class="wc wc--e2" aria-hidden="true"><div class="wc__label">Icon contrast</div><span class="slot wc__next" style="--sh:22px;--sd:6.6s"><span class="slot__track slot__track--4"><span><i class="wc__dot wc__dot--ok"></i>Shared COI &middot; AA</span><span><i class="wc__dot wc__dot--ok"></i>Role &middot; AA</span><span><i class="wc__dot wc__dot--ok"></i>Configuration &middot; AA</span><span><i class="wc__dot wc__dot--ok"></i>Shared COI &middot; AA</span></span></span></div></div>
             </div>
           </div>
         </a>
@@ -2685,6 +2716,73 @@ button{font-family:inherit}
         <p class="cs-footer__title">Read the full case study</p>
         <div class="hds-button-group">
           <a class="hds-button hds-button--primary" href="case-studies/redpro-homepage.html">Open case study<span class="hds-nowrap-svg"><svg class="hds-icon hds-icon-hover-arrow" width="5" height="8" fill="none" viewBox="0 0.5 5 8"><defs><clipPath id="csArrow32"><rect x="0" y="0" width="12" height="9"></rect></clipPath></defs><g clip-path="url(#csArrow32)"><g class="arrow-group"><rect class="shaft" x="-10" y="3.375" width="13" height="1.75" fill="currentColor"></rect><path d="M4.84766 3.63379L5.45898 4.25L4.84766 4.86621L1.24219 8.49902L0 7.2666L2.99316 4.24902L0 1.23242L1.24219 0L4.84766 3.63379Z" fill="currentColor"></path></g></g></svg></span></a>
+          <a class="hds-button hds-button--secondary-on-quiet" href="#case/stealth-canvas">Next: Stealth Canvas refinement</a>
+        </div>
+      </footer>
+    </article>
+  </div>
+</dialog>
+
+<dialog class="cs-dialog cs-dialog--canvas" id="cs-stealth-canvas" aria-labelledby="cs-stealth-canvas-title">
+  <div class="cs-dialog__overlay" data-cs-close aria-hidden="true">
+    <span class="cs-dialog__glow cs-dialog__glow--a"></span>
+    <span class="cs-dialog__glow cs-dialog__glow--b"></span>
+  </div>
+  <div class="cs-dialog__scroller" data-cs-scroller>
+    <article class="cs-dialog__panel">
+      <button type="button" class="cs-dialog__close" data-cs-close aria-label="Close case study">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+      </button>
+      <header class="cs-header">
+        <div class="cs-intro">
+          <p class="cs-eyebrow">Case study &middot; Unisys &middot; Stealth Enterprise Manager</p>
+          <h2 class="cs-title" id="cs-stealth-canvas-title">Stealth Canvas refinement</h2>
+          <p class="cs-lede">Stealth&rsquo;s Canvas maps every configuration, role and encrypted channel in a network. At real scale it became a hairball of look-alike icons and grey lines. I audited it, rebuilt its icon and colour language, and cleaned up the components around it.</p>
+          <div class="hds-button-group cs-actions">
+            <a class="hds-button hds-button--primary" href="case-studies/stealth-canvas.html">Read full case study<span class="hds-nowrap-svg"><svg class="hds-icon hds-icon-hover-arrow" width="5" height="8" fill="none" viewBox="0 0.5 5 8"><defs><clipPath id="csArrow41"><rect x="0" y="0" width="12" height="9"></rect></clipPath></defs><g clip-path="url(#csArrow41)"><g class="arrow-group"><rect class="shaft" x="-10" y="3.375" width="13" height="1.75" fill="currentColor"></rect><path d="M4.84766 3.63379L5.45898 4.25L4.84766 4.86621L1.24219 8.49902L0 7.2666L2.99316 4.24902L0 1.23242L1.24219 0L4.84766 3.63379Z" fill="currentColor"></path></g></g></svg></span></a>
+            <a class="hds-button hds-button--secondary-on-quiet" href="#cs-stealth-canvas-screens" data-cs-jump>See before &amp; after</a>
+          </div>
+        </div>
+        <dl class="cs-facts"><div><dt><svg class="cs-check" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8"/><path d="M4.6 8.2l2.2 2.2 4.6-4.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Role</dt><dd>UX Designer, Stealth</dd></div><div><dt><svg class="cs-check" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8"/><path d="M4.6 8.2l2.2 2.2 4.6-4.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Product</dt><dd>Stealth Enterprise Manager &middot; Canvas</dd></div><div><dt><svg class="cs-check" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8"/><path d="M4.6 8.2l2.2 2.2 4.6-4.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Scope</dt><dd>Audit &middot; Icons &middot; Colour &middot; Components</dd></div><div><dt><svg class="cs-check" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8"/><path d="M4.6 8.2l2.2 2.2 4.6-4.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Users</dt><dd>Security administrators</dd></div><div><dt><svg class="cs-check" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8"/><path d="M4.6 8.2l2.2 2.2 4.6-4.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>When</dt><dd>Unisys &middot; 2022</dd></div></dl>
+      </header>
+      <div class="cs-graphics">
+        <figure class="cs-graphic cs-graphic--main cs-reveal" style="--d:0ms">
+          <div class="cs-window">
+            <div class="cs-window__bar"><i></i><i></i><i></i><span>Stealth &middot; Enterprise Manager &middot; Canvas</span></div>
+            <img class="cs-window__img" src="work/canvas/refined-canvas.jpg" alt="The refined Canvas with a Healthcare configuration expanded and one COI&rsquo;s channels highlighted" decoding="async">
+          </div>
+        </figure>
+        <figure class="cs-graphic cs-graphic--stat cs-reveal" style="--d:100ms">
+          <div class="cs-stat" aria-label="From colours failing contrast to nine icon colours that all pass WCAG AA"><span class="cs-stat__old">1.71 : 1 contrast</span><span class="cs-stat__new">9 / 9 AA</span><span class="cs-stat__caption">new icon colours clear WCAG AA for graphics &ndash; on the light canvas and the dark tint</span></div>
+        </figure>
+        <figure class="cs-graphic cs-graphic--modal cs-reveal" style="--d:200ms">
+          <img class="cs-modal-img" style="width:90%;top:22%" src="work/canvas/theme-test.jpg" alt="The new icons tested on dark and light backgrounds with their contrast ratios" decoding="async">
+        </figure>
+      </div>
+      <section class="cs-details" aria-label="Three reads that set the direction"><div class="cs-detail"><div class="cs-detail__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3.5" width="6" height="5" rx="1"/><rect x="9" y="15.5" width="6" height="5" rx="1"/><path d="M12 8.5v7"/></svg></div><h3 class="cs-detail__title">Learn the model</h3><p>Configurations, roles, COIs and cleartext filters &ndash; documented object by object before a single icon changed.</p></div><div class="cs-detail"><div class="cs-detail__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.2l2.3 2.3 4.7-4.9"/></svg></div><h3 class="cs-detail__title">Audit honestly</h3><p>52 heuristic findings and a contrast check of every colour. More than half of the testable pairs failed AA.</p></div><div class="cs-detail"><div class="cs-detail__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17c4-9 12-9 16 0"/><path d="M4 13c4-6 12-6 16 0" stroke-dasharray="2 2"/></svg></div><h3 class="cs-detail__title">Stop asking for recall</h3><p>What a colour, an icon or a line means should be on the canvas, not in the admin&rsquo;s head.</p></div></section>
+      <section class="cs-cards">
+        <h3 class="cs-section-title">How it came together</h3>
+        <div class="cs-cards__grid"><article class="cs-card"><div class="cs-card__graphic cs-card__graphic--shot"><img class="" src="work/canvas/existing-canvas.jpg" alt="The existing canvas at real scale" loading="lazy" decoding="async"></div><p class="cs-card__step">01 &middot; Heuristic audit</p><h4 class="cs-card__title">Fine with ten nodes, not a hundred</h4><p class="cs-card__text">Look-alike icons told apart by colour alone, truncated labels, and grey lines that never said what they carried.</p></article><article class="cs-card"><div class="cs-card__graphic cs-card__graphic--shot"><img class="" src="work/canvas/icon-ideation.jpg" alt="Icon ideation board" loading="lazy" decoding="async"></div><p class="cs-card__step">02 &middot; Icons &amp; colour</p><h4 class="cs-card__title">An icon set with rules attached</h4><p class="cs-card__text">Every icon questioned and redrawn, each with its meaning, states and contrast &ndash; nine colours, all passing AA.</p></article><article class="cs-card"><div class="cs-card__graphic cs-card__graphic--shot"><img class="" src="work/canvas/refined-coi.jpg" alt="The refined canvas with a COI selected" loading="lazy" decoding="async"></div><p class="cs-card__step">03 &middot; Solution</p><h4 class="cs-card__title">From hairball to map</h4><p class="cs-card__text">Labelled navigation, a framed configuration, COIs above their roles, and only the selected object&rsquo;s channels in colour.</p></article></div>
+      </section>
+      <section class="cs-rules">
+        <div class="cs-rules__head"><h3 class="cs-section-title">Make the map explain itself</h3><p>Anything an admin had to remember should be visible on the canvas or in the legend instead.</p></div>
+        <ol class="cs-rules__list"><li><span>01</span><h4>One shape per object</h4><p>Distinct silhouettes, so colour is never the only cue.</p></li><li><span>02</span><h4>Colour carries scope</h4><p>Teal for shared across configurations, gold for limited to one.</p></li><li><span>03</span><h4>Lines say what they carry</h4><p>Solid is encrypted, dotted is cleartext, pink is an exclusive role.</p></li><li><span>04</span><h4>Quiet until selected</h4><p>Unrelated channels recede; the selection lights up its own.</p></li></ol>
+      </section>
+      <section class="cs-screens" id="cs-stealth-canvas-screens">
+        <div class="cs-screens__head">
+          <h3 class="cs-section-title">Before and after</h3>
+          <p>Same data and capabilities &ndash; now readable at a glance.</p>
+          <ul class="cs-tokens" aria-label="Canvas object colours"><li><i style="background:#863dcc"></i>Configuration <code>#863DCC</code></li><li><i style="background:#138079"></i>Shared COI <code>#138079</code></li><li><i style="background:#996f1f"></i>COI <code>#996F1F</code></li></ul>
+        </div>
+        <div class="cs-strip" tabindex="0" aria-label="Screens, scroll horizontally"><figure><img class="" src="work/canvas/refined-canvas.jpg" alt="The refined canvas" loading="lazy" decoding="async"><figcaption>Refined canvas</figcaption></figure><figure><img class="" src="work/canvas/refined-coi.jpg" alt="A COI selected, with its members" loading="lazy" decoding="async"><figcaption>COI selected</figcaption></figure><figure><img class="" src="work/canvas/existing-canvas.jpg" alt="The existing canvas" loading="lazy" decoding="async"><figcaption>Before &middot; existing canvas</figcaption></figure></div>
+      </section>
+      <hr class="cs-divider">
+      <figure class="cs-quote"><blockquote>&ldquo;The canvas didn&rsquo;t need more features. It needed to stop making admins remember.&rdquo;</blockquote><figcaption>Shape, colour and line carrying the meaning that used to live in people&rsquo;s heads</figcaption></figure>
+      <hr class="cs-divider">
+      <footer class="cs-footer">
+        <p class="cs-footer__title">Read the full case study</p>
+        <div class="hds-button-group">
+          <a class="hds-button hds-button--primary" href="case-studies/stealth-canvas.html">Open case study<span class="hds-nowrap-svg"><svg class="hds-icon hds-icon-hover-arrow" width="5" height="8" fill="none" viewBox="0 0.5 5 8"><defs><clipPath id="csArrow42"><rect x="0" y="0" width="12" height="9"></rect></clipPath></defs><g clip-path="url(#csArrow42)"><g class="arrow-group"><rect class="shaft" x="-10" y="3.375" width="13" height="1.75" fill="currentColor"></rect><path d="M4.84766 3.63379L5.45898 4.25L4.84766 4.86621L1.24219 8.49902L0 7.2666L2.99316 4.24902L0 1.23242L1.24219 0L4.84766 3.63379Z" fill="currentColor"></path></g></g></svg></span></a>
           <a class="hds-button hds-button--secondary-on-quiet" href="#case/invoice-reconciliation">Next: Invoice reconciliation tool</a>
         </div>
       </footer>
@@ -5250,7 +5348,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
   const SCENES = {
     reconcile: { pal: ['#f0612a', '#ff9a4d', '#ffc56b', '#e8455f'], shape: [0.52, 0.18, 0.0, 1.0], seed: 1.0 },
     hubble:    { pal: ['#315ed1', '#7b61ff', '#0098ee', '#c3b5ff'], shape: [0.82, 0.24, 0.0, 1.0], seed: 4.0 },
-    redpro:    { pal: ['#2f6fd6', '#19c3b4', '#9fd6ff', '#f5b84a'], shape: [0.98, 0.78, 0.22, 1.0], seed: 7.0 }
+    redpro:    { pal: ['#2f6fd6', '#19c3b4', '#9fd6ff', '#f5b84a'], shape: [0.98, 0.78, 0.22, 1.0], seed: 7.0 },
+    canvas:    { pal: ['#7a3ec8', '#138079', '#c3a0ff', '#1473cc'], shape: [0.98, 0.70, 0.30, 1.0], seed: 10.0 }
   };
 
   const VERT = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';

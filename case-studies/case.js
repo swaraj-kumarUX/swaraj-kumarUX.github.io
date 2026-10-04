@@ -20,6 +20,8 @@
  *            drift out of phase, align, and turn green when they agree
  *   ramp     HubbleUI: a tonal colour scale whose hue sweeps the blues
  *   trend    redPro: a wall of noisy metrics settling into one clear trend
+ *   graph    Stealth Canvas: a tangle of grey links between rows of nodes that
+ *            thins out until only one node's channels stay, in colour
  *   aurora   light-on-navy ribbons for the dark bands (hue from data-hue)
  * Drawn only while visible; a single still frame under reduced motion. */
 (() => {
@@ -84,6 +86,34 @@
         for (let x = -8; x <= w + 8; x += 8) { const y = trend(x / w); x === -8 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
         ctx.strokeStyle = `rgba(216,78,85,${.9 * order})`; ctx.lineWidth = 2.6; ctx.stroke();
       }
+      fadeLeft(ctx, w, h);
+    },
+    graph(ctx, w, h, t) {
+      // on phones the band runs behind the copy, so it stays faint there
+      ctx.globalAlpha = w < 700 ? .3 : 1;
+      const c = .5 + .5 * Math.cos(t * .5), order = smooth(.3, .75, c);
+      const cols = 11, rows = 4, nodes = [];
+      for (let r = 0; r < rows; r++) for (let k = 0; k < cols; k++) {
+        const u = .3 + .68 * k / (cols - 1), j = (1 - order) * 26;
+        nodes.push({ r, k, x: u * w + j * Math.sin(k * 2.1 + r * 1.3 + t * .8), y: heroBase(u) + (r - 1.5) * 52 + j * Math.cos(k * 1.7 + r + t * .7) });
+      }
+      const at = (r, k) => nodes[r * cols + k];
+      const link = (a, b, style, lw) => {
+        ctx.beginPath(); ctx.moveTo(a.x, a.y);
+        ctx.quadraticCurveTo((a.x + b.x) / 2, (a.y + b.y) / 2 - 30, b.x, b.y);
+        ctx.strokeStyle = style; ctx.lineWidth = lw; ctx.stroke();
+      };
+      // the hairball: every COI (top row) to roles all over the map
+      for (let k = 0; k < cols; k++) for (let m = 0; m < cols; m += 2) for (let r = 1; r < rows; r++)
+        link(at(0, k), at(r, (m + k * 3 + r) % cols), `rgba(120,130,150,${.16 * (1 - order * .75)})`, 1);
+      // as it settles, one COI's channels stand out
+      if (order > .01) for (let r = 1; r < rows; r++) for (let m = 5; m < cols; m += 2)
+        link(at(0, 8), at(r, m), `rgba(122,62,200,${.75 * order})`, 1.4);
+      nodes.forEach(n => {
+        ctx.beginPath(); ctx.arc(n.x, n.y, n.r ? 3.4 : 4.6, 0, Math.PI * 2);
+        ctx.fillStyle = n.r ? 'rgba(20,115,204,.75)' : (n.k === 8 ? '#7a3ec8' : 'rgba(19,128,121,.8)'); ctx.fill();
+      });
+      ctx.globalAlpha = 1;
       fadeLeft(ctx, w, h);
     },
     aurora(ctx, w, h, t, el) {
