@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Swaraj Kumar: the CTA's blue-to-teal on a rounded tile, a white "S",
+       and a short run of halftone dots from the hero ribbon -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a55d6"/>
+      <stop offset=".5" stop-color="#1a6fd0"/>
+      <stop offset="1" stop-color="#0b8a86"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#g)"/>
+  <path d="M42.5 21.5C40 17.8 36 16.5 31.6 16.5c-5.8 0-10 3.2-10 7.8 0 5.1 4.9 6.6 10.6 8 5.8 1.4 10.3 3 10.3 8.3 0 4.7-4.3 7.9-10.6 7.9-4.9 0-9-2-11.4-5.9"
+        fill="none" stroke="#fff" stroke-width="7.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#fff">
+    <circle cx="51.5" cy="52" r="2.7" opacity=".9"/>
+    <circle cx="51.5" cy="45" r="1.9" opacity=".7"/>
+    <circle cx="44.5" cy="52" r="1.9" opacity=".7"/>
+    <circle cx="51.5" cy="38.5" r="1.1" opacity=".5"/>
+  </g>
+</svg>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>/* theme before first paint: saved choice, else the system setting */(()=>{let t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../assets/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c0f" media="(prefers-color-scheme: dark)">
+<title>HubbleUI design system — Swaraj Kumar</title>
+<meta name="description" content="Case study: rebuilding the PARTICLES colour foundation at redBus, migrating the first component onto it, and building the Figma plugin that keeps it from drifting.">
+<link rel="preload" href="../assets/sohne-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="case.css">
+<!-- project colours: PARTICLES brand blue-500 and turquoise-500 -->
+<style>:root{--p1:#315ed1;--p2:#0098ee;--p1-light:#9db6ff;--p2-light:#6fd0ff;--paper:#eef2fb}</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js')</script>
+
+<header class="nav" id="nav">
+  <div class="wrap" style="padding:0">
+    <div class="nav__row">
+      <a class="nav__brand" href="../#work"><b>Swaraj Kumar</b><span>Senior UX Designer</span></a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="../#work">Work</a>
+        <!-- About hidden until the page is ready: <a href="../index.html#about" target="_blank" rel="noopener">About</a> -->
+        <a href="../assets/Swaraj-Kumar-Resume.pdf" target="_blank" rel="noopener">Resume</a>
+        <a class="btn btn--primary btn--linkedin" href="https://www.linkedin.com/in/swaraj-k/" target="_blank" rel="noopener">LinkedIn<svg class="arrow" viewBox="0 0 6 10" aria-hidden="true"><g><rect class="shaft" x="-8" y="4.1" width="11" height="1.8" fill="currentColor"/><path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8"/></g></svg></a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- =============================== HERO =============================== -->
+<section class="hero ruled" aria-labelledby="title">
+  <canvas class="hero__bg" data-scene="ramp" aria-hidden="true"></canvas>
+  <div class="wrap"><div class="inner">
+    <div class="hero__crumb"><a href="../#work">Work</a><i></i><span class="sub">Case study &middot; redBus / redPro</span></div>
+    <div class="grid">
+      <div class="hero__copy">
+        <p class="eyebrow">HubbleUI design system</p>
+        <h1 class="h-xxl" id="title">PARTICLES looked like a design system. <span class="sub">Nothing in production actually used it.</span></h1>
+        <p class="lede">I rebuilt its color foundation from measured, provable drift &ndash; then migrated redPro&rsquo;s first real component onto it, found a shipped accessibility bug on the way, and built the tooling to stop the drift from ever coming back unwatched.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#process">Read the process<svg class="arrow" viewBox="0 0 6 10" aria-hidden="true"><g><rect class="shaft" x="-8" y="4.1" width="11" height="1.8" fill="currentColor"/><path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8"/></g></svg></a>
+          <a class="btn btn--secondary" href="#tool">See the plugin</a>
+        </div>
+      </div>
+      <dl class="hero__facts">
+        <div class="fact"><dt>Role</dt><dd>Token architecture owner &amp; migration lead, sole plugin builder</dd></div>
+        <div class="fact"><dt>System</dt><dd>PARTICLES (tokens) &middot; CLUSTERS (components)</dd></div>
+        <div class="fact"><dt>Scope</dt><dd>Color engineering &middot; WCAG remediation &middot; component migration &middot; Figma plugin</dd></div>
+        <div class="fact"><dt>Migrated</dt><dd>Buttons &ndash; component 1 of 28</dd></div>
+        <div class="fact"><dt>Status</dt><dd>Live, in active use on redPro</dd></div>
+      </dl>
+    </div>
+    <div class="hero__stage">
+      <div class="frame hero__main reveal">
+        <div class="frame__bar"><i></i><i></i><i></i><span>PARTICLES &middot; gray scale audit</span></div>
+        <img src="../work/hubble/gray-audit.png" alt="Gray scale audit dashboard — hue wheel, lightness ladder, and step sizes" width="1512" height="1484">
+      </div>
+      <div class="frame hero__side reveal" style="--d:150ms">
+        <img src="../work/hubble/plugin-adoption.png" alt="HubbleUI Design Assistant — Adoption Score tab" width="1040" height="1220">
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================= OBJECTIVE ============================ -->
+<section class="sec ruled" style="border-top:1px solid var(--rule)">
+  <div class="wrap"><div class="inner">
+    <div class="objective">
+      <div class="objective__q reveal">
+        <p class="eyebrow" style="margin-bottom:20px">Objective</p>
+        <h2 class="h-xl">Trust it provably, not just aesthetically. <span class="sub">Rebuild PARTICLES&rsquo; color foundation into something engineers and designers could actually rely on &ndash; then prove it by migrating a real, shipped component onto it.</span></h2>
+      </div>
+      <p class="objective__note text reveal" style="--d:120ms">A token file that&rsquo;s well-organized on paper but disconnected from production doesn&rsquo;t help anyone. And a fix that only holds until the next deadline doesn&rsquo;t either &ndash; which is why this work ends in tooling, not just a cleaner file.</p>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================== PROBLEM ============================= -->
+<section class="sec ruled" id="problem" style="background:var(--wash)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">The problem</p>
+        <h2 class="h-lg">Three compounding issues. <span class="sub">PARTICLES existed. It wasn&rsquo;t trustworthy.</span></h2>
+      </div>
+    </div>
+    <div class="cards-3">
+      <article class="card reveal">
+        <p class="card__num">01</p>
+        <h3 class="h-sm">The colors drifted</h3>
+        <p class="text-sm">Pasted in over time from different sources rather than engineered. The brand blue wandered between 213&deg; and 223&deg; across its own scale &ndash; &ldquo;blue-100&rdquo; and &ldquo;blue-500&rdquo; weren&rsquo;t the same blue, just lighter and darker versions of visibly different ones.</p>
+      </article>
+      <article class="card reveal" style="--d:100ms">
+        <p class="card__num">02</p>
+        <h3 class="h-sm">Accessibility failed</h3>
+        <p class="text-sm">Success, warning and error text &ndash; used constantly in a data-dense B2B tool &ndash; sat at 3.9&ndash;4.3:1 contrast. WCAG AA requires 4.5:1. Real users with low vision couldn&rsquo;t reliably read status messages.</p>
+      </article>
+      <article class="card reveal" style="--d:200ms">
+        <p class="card__num">03</p>
+        <h3 class="h-sm">Production wasn&rsquo;t even connected</h3>
+        <p class="text-sm">Live components &ndash; real buttons, badges, inputs on shipped screens &ndash; were bound to a third, older system with 151+ legacy variable names. PARTICLES was a well-organized file nothing in production depended on.</p>
+      </article>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= PROCESS 01: AUDIT ======================== -->
+<section class="sec ruled" id="process">
+  <div class="wrap"><div class="inner">
+    <div class="split">
+      <div class="split__copy reveal">
+        <p class="eyebrow">Process &middot; 01</p>
+        <h2 class="h-lg">Audit before engineering. <span class="sub">Rather than guessing at fixes, I audited every family&rsquo;s hue, saturation and lightness numerically.</span></h2>
+        <p class="text">Plotting each on a hue wheel makes drift visible instead of eyeballing hex codes. That turns &ldquo;these colors look a bit off&rdquo; into a provable finding: blue-800 sits at 2&deg; hue while the rest of the family sits at 8&ndash;10&deg; is a fixable fact. &ldquo;This looks slightly wrong&rdquo; is not.</p>
+      </div>
+      <figure class="split__fig fig reveal" style="--d:120ms">
+        <div class="fig__panel"><img src="../work/hubble/gray-audit.png" alt="Hue wheel, lightness ladder and step sizes for the gray scale" loading="lazy"></div>
+        <figcaption>The old ramp jumps 4, 4, 4, 7, 0, &minus;1, 10, 12, 19, 18, 10; the new one rises cleanly 4&rarr;6&rarr;8&rarr;10&rarr;12&rarr;14&rarr;15&rarr;16.</figcaption>
+      </figure>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= PROCESS 02: GRAYS ======================== -->
+<section class="sec ruled" style="background:var(--wash)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Process &middot; 02</p>
+        <h2 class="h-lg">Engineer the gray scale from scratch. <span class="sub">Grays are the hardest-working color in any interface, and the most tolerant of getting quietly wrong.</span></h2>
+      </div>
+      <div class="head__r reveal" style="--d:120ms">
+        <p class="text">12 scattered values became 9 engineered stops: one locked 216&deg; cool undertone to harmonize with the brand blue, and lightness steps that rise unevenly &ndash; because human vision compresses differences in dark tones more than light ones. gray-0 stayed deliberately pure white.</p>
+      </div>
+    </div>
+    <div class="stats reveal" style="margin-bottom:56px">
+      <div class="stat"><span class="stat__n stat__n--grad">12 &rarr; 9</span><span class="stat__t">Engineered stops</span><span class="stat__d">From scattered values to a deliberate ramp.</span></div>
+      <div class="stat"><span class="stat__n stat__n--grad">216&deg;</span><span class="stat__t">One locked undertone</span><span class="stat__d">Cool, to sit beside the brand blue.</span></div>
+      <div class="stat"><span class="stat__n stat__n--grad">81%</span><span class="stat__t">Three grays, one color</span><span class="stat__d">Old gray-300/400/500 all sat near 81% lightness. Now 80%, 71% and 61%.</span></div>
+    </div>
+    <div class="cards-2">
+      <figure class="fig reveal">
+        <div class="fig__panel" style="background:#fff"><img src="../work/hubble/gray-roles.png" alt="Old and new gray scale mapped to their UI roles" loading="lazy"></div>
+        <figcaption>Every stop tied to what it actually does in the product &ndash; not just a ramp of squares.</figcaption>
+      </figure>
+      <figure class="fig reveal" style="--d:120ms">
+        <div class="fig__panel" style="background:#fff"><img src="../work/hubble/gray-before-after.png" alt="Gray scale before and after, with hex values and lightness" loading="lazy"></div>
+        <figcaption>The proof: gray-300, 400 and 500 were functionally one color wearing three names.</figcaption>
+      </figure>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= PROCESS 03: HUE ========================== -->
+<section class="sec ruled">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Process &middot; 03</p>
+        <h2 class="h-lg">Lock hue &ndash; without erasing character. <span class="sub">Every chromatic family got locked to one mathematically precise hue. But I prototyped a fully &ldquo;normalized&rdquo; version too, and rejected it.</span></h2>
+      </div>
+    </div>
+    <div class="callout reveal">
+      <div class="callout__l"><p class="eyebrow" style="margin-bottom:8px">The judgment call</p><p class="h-md" style="font-weight:300">Knowing which axis to standardize, and which to leave alone.</p></div>
+      <div class="callout__r"><p class="text">The normalized version produced an acidic green, muddy dark ambers, and would have shifted the protected brand blue to a more saturated, less calm color. Hue consistency was worth enforcing everywhere; saturation and lightness needed to stay hand-tuned per family &ndash; that&rsquo;s what reads as designed rather than generated.</p></div>
+    </div>
+    <figure class="fig reveal" style="margin-top:40px">
+      <div class="fig__panel fig__panel--scroll" style="background:#fff"><img src="../work/hubble/all-colors.png" alt="The full upgraded color system across every family" loading="lazy"></div>
+      <figcaption>The same rebuild across every family &ndash; including the two deliberate exceptions, blue-primo and red-brand, held apart from their scales on purpose.</figcaption>
+    </figure>
+  </div></div>
+</section>
+
+<!-- ======================= PROCESS 04: CONTRAST ======================= -->
+<section class="sec ruled" style="background:var(--wash)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Process &middot; 04</p>
+        <h2 class="h-lg">Fix accessibility as engineering, not polish. <span class="sub">Each failing feedback color needed a specific, calculated darkening &ndash; not a guess.</span></h2>
+      </div>
+      <div class="head__r reveal" style="--d:120ms">
+        <p class="text">I computed exactly how far each needed to move to clear 4.5:1 against its real background, then applied the minimum change: 2&ndash;3% lightness &ndash; almost imperceptible, but the difference between passing and failing AA. Each fix folded into the primary token rather than adding parallel &ldquo;-600&rdquo; variants.</p>
+      </div>
+    </div>
+    <div class="stats reveal" style="margin-bottom:56px">
+      <div class="stat"><span class="stat__n" style="color:#c0123c">3.9&ndash;4.3</span><span class="stat__t">Before &middot; failing</span><span class="stat__d">Status text contrast, in a data-dense tool.</span></div>
+      <div class="stat"><span class="stat__n stat__n--grad">4.5&ndash;4.7</span><span class="stat__t">After &middot; passing AA</span><span class="stat__d">Against each color&rsquo;s real background.</span></div>
+      <div class="stat"><span class="stat__n stat__n--grad">2&ndash;3%</span><span class="stat__t">Lightness moved</span><span class="stat__d">The minimum change that clears the bar.</span></div>
+    </div>
+    <div class="cards-3" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
+      <div class="swatch reveal"><div class="swatch__chip" style="background:#315ED1"></div><div class="swatch__meta"><b>blue-500 &middot; brand</b><code>#315ED1</code></div></div>
+      <div class="swatch reveal" style="--d:60ms"><div class="swatch__chip" style="background:#1F252E"></div><div class="swatch__meta"><b>gray-700 &middot; text</b><code>#1F252E</code></div></div>
+      <div class="swatch reveal" style="--d:120ms"><div class="swatch__chip" style="background:#D32B11"></div><div class="swatch__meta"><b>red-500 &middot; error</b><code>#D32B11</code></div></div>
+      <div class="swatch reveal" style="--d:180ms"><div class="swatch__chip" style="background:#1B8040"></div><div class="swatch__meta"><b>green-500 &middot; success</b><code>#1B8040</code></div></div>
+      <div class="swatch reveal" style="--d:240ms"><div class="swatch__chip" style="background:#A26100"></div><div class="swatch__meta"><b>amber-800 &middot; warning</b><code>#A26100</code></div></div>
+      <div class="swatch reveal" style="--d:300ms"><div class="swatch__chip" style="background:#0098EE"></div><div class="swatch__meta"><b>turquoise-500 &middot; info</b><code>#0098EE</code></div></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ======================= PROCESS 05: BUTTONS ======================== -->
+<section class="sec ruled">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Process &middot; 05</p>
+        <h2 class="h-lg">Migrating Buttons &ndash; and finding the real bug. <span class="sub">With the foundation solid, I migrated Buttons, the first of 28 components, off the legacy system.</span></h2>
+      </div>
+      <div class="head__r reveal" style="--d:120ms">
+        <p class="text">Mapping Buttons&rsquo; legacy variables to PARTICLES tokens surfaced a real, shipped accessibility bug: Disabled + Hover rendered white text on a light gray background &ndash; essentially invisible.</p>
+      </div>
+    </div>
+    <div class="trace reveal">
+      <div class="trace__cell"><p class="card__label">The symptom</p><blockquote>White text on light gray in the Disabled + Hover state &ndash; essentially invisible.</blockquote></div>
+      <div class="trace__arrow"><span>&rarr;</span></div>
+      <div class="trace__cell trace__cell--out"><p class="card__label" style="color:var(--p1)">The defect</p><p class="text">Disabled was modeled inside the color-intent axis, beside &ldquo;Active&rdquo; and &ldquo;Destructive&rdquo; &ndash; so it got crossed against every hover and pressed state, combinations that should never have existed.</p></div>
+    </div>
+    <div class="callout reveal" style="margin-top:16px">
+      <div class="callout__l"><p class="eyebrow" style="margin-bottom:8px">Symptom vs. defect</p><p class="h-md" style="font-weight:300">Make the bug class impossible, not patched once.</p></div>
+      <div class="callout__r">
+        <p class="text">I restructured the variant architecture so Disabled became a <strong>state</strong>, orthogonal to color intent &ndash; matching how Material Design and Adobe Spectrum model it.</p>
+        <p class="text">The same pass caught that Tertiary was visually almost identical to Secondary. I made it borderless and transparent at rest, giving designers an actual third tier of emphasis.</p>
+      </div>
+    </div>
+    <div class="head" style="margin:88px 0 32px">
+      <div class="head__l reveal">
+        <p class="eyebrow">Process &middot; 06</p>
+        <h3 class="h-lg">Building the process, not just the fix.</h3>
+      </div>
+      <div class="head__r reveal" style="--d:100ms"><p class="text">A standardized documentation template per component, plus a running backlog of every deferred decision &ndash; so nothing gets silently dropped across the remaining 27.</p></div>
+    </div>
+    <div class="cards-4" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div class="card card--wash reveal"><p class="card__num">01</p><p class="h-sm">Use when</p></div>
+      <div class="card card--wash reveal" style="--d:60ms"><p class="card__num">02</p><p class="h-sm">Do not use</p></div>
+      <div class="card card--wash reveal" style="--d:120ms"><p class="card__num">03</p><p class="h-sm">Variant map</p></div>
+      <div class="card card--wash reveal" style="--d:180ms"><p class="card__num">04</p><p class="h-sm">Token list</p></div>
+      <div class="card reveal" style="--d:240ms;border-color:color-mix(in srgb,var(--p1) 35%,#fff)"><p class="card__num">05</p><p class="h-sm">Anti-substitutions</p><p class="text-sm">Explicitly encodes mistakes already found, so they can&rsquo;t quietly recur.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================ BEFORE / AFTER ======================== -->
+<section class="sec ruled" style="background:var(--wash)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Before &amp; after</p>
+        <h2 class="h-lg">Measured, not eyeballed.</h2>
+      </div>
+    </div>
+    <div class="table-wrap reveal">
+      <table class="table">
+        <thead><tr><th>Area</th><th>Before</th><th>After</th></tr></thead>
+        <tbody>
+          <tr><td>Hue consistency</td><td>Drifting 3&ndash;10&deg; across stops</td><td class="after">Locked, mathematically verified</td></tr>
+          <tr><td>Gray scale</td><td>12 scattered values</td><td class="after">9 engineered stops, even perceptual steps</td></tr>
+          <tr><td>WCAG text contrast</td><td>3.9&ndash;4.3:1 (failing)</td><td class="after">4.5&ndash;4.7:1 (passing)</td></tr>
+          <tr><td>Components on governed tokens</td><td>0 of 28</td><td class="after">1 migrated, documented, templated</td></tr>
+          <tr><td>Known a11y bugs in production</td><td>1 found &ndash; invisible disabled-state text</td><td class="after">Fixed; the architecture that caused it corrected</td></tr>
+          <tr><td>Documentation</td><td>None</td><td class="after">Living component registry + backlog</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout reveal" style="margin-top:40px">
+      <div class="callout__l"><p class="eyebrow" style="margin-bottom:8px">What I learned</p><p class="h-md" style="font-weight:300">Which inconsistencies were bugs, and which were design decisions dressed up as inconsistencies.</p></div>
+      <div class="callout__r">
+        <p class="text">Uniform hue was a bug. Uniform saturation across five different families was not &ndash; enforcing it anyway would have made the system worse while looking more &ldquo;consistent&rdquo; on paper.</p>
+        <p class="text">The migration reinforced the same lesson structurally: the visible symptom and the actual defect were two different things. Fixing the axis meant it couldn&rsquo;t happen again.</p>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================ PULL QUOTE ============================ -->
+<section class="dark">
+  <canvas class="dark__bg" data-scene="aurora" data-hue="215" aria-hidden="true"></canvas>
+  <div class="wrap"><div class="inner sec">
+    <figure class="pull reveal">
+      <blockquote>A rebuilt, correct system still drifts the moment <em>nobody&rsquo;s watching.</em></blockquote>
+      <figcaption>So I built the thing that watches &ndash; why the fix couldn&rsquo;t end at component 1 of 28</figcaption>
+    </figure>
+  </div></div>
+</section>
+
+<!-- ============================ ACT TWO: TOOL ========================= -->
+<section class="sec ruled" id="tool">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Act two &middot; The tool</p>
+        <h2 class="h-lg">HubbleUI Design Assistant. <span class="sub">A Figma plugin I designed and built myself &ndash; ES5 JavaScript in Figma&rsquo;s sandbox, with its own UI, its own scoring logic, and a direct connection to Claude for the one check that needs a real eye.</span></h2>
+      </div>
+      <div class="head__r reveal" style="--d:120ms"><p class="text">Auditing 27 more components by hand doesn&rsquo;t scale, and neither does trusting every future PR to remember the fixes. Four features, each closing a different way drift actually happens.</p></div>
+    </div>
+    <div class="cards-4" style="margin-bottom:56px">
+      <article class="card reveal"><p class="card__num">01</p><h3 class="h-sm">Audit + auto-fix</h3><p class="text-sm">Scans fills, strokes, radius, spacing and type against the token scale. Off-system values get a severity, a plain-language reason, and the nearest token &ndash; found by colour-distance matching.</p></article>
+      <article class="card reveal" style="--d:80ms"><p class="card__num">02</p><h3 class="h-sm">Adoption Score</h3><p class="text-sm">One number, five weighted dimensions. Turns &ldquo;is this on-system?&rdquo; into something a lead can track over time.</p></article>
+      <article class="card reveal" style="--d:160ms"><p class="card__num">03</p><h3 class="h-sm">Detached Instance Detector</h3><p class="text-sm">Fully detached layers, broken links to a deleted component, and instances still linked but overridden &ndash; each override tagged token-bound or uncontrolled.</p></article>
+      <article class="card reveal" style="--d:240ms"><p class="card__num">04</p><h3 class="h-sm">DAT &ndash; AI fidelity check</h3><p class="text-sm">A developer-build screenshot beside the Figma design; Claude compares colour, type, spacing, components and layout, and returns a scored, structured report.</p></article>
+    </div>
+    <div class="panels">
+      <figure class="fig reveal"><div class="panel"><img src="../work/hubble/plugin-audit.png" alt="Audit tab: off-token issues with severity and nearest token" loading="lazy"></div><figcaption>Audit &ndash; each issue names the property, the value, and the nearest token.</figcaption></figure>
+      <figure class="fig reveal" style="--d:100ms"><div class="panel"><img src="../work/hubble/plugin-adoption.png" alt="Adoption Score tab: weighted breakdown" loading="lazy"></div><figcaption>Adoption Score &ndash; the ring is the headline; the bars are where a lead finds the next fix.</figcaption></figure>
+      <figure class="fig reveal" style="--d:200ms"><div class="panel"><img src="../work/hubble/plugin-detach.png" alt="Detach tab: detached, broken-link and overridden instances" loading="lazy"></div><figcaption>Detach &ndash; three failure modes, not one.</figcaption></figure>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================== ADOPTION SCORE ========================== -->
+<section class="sec ruled" style="background:var(--wash)">
+  <div class="wrap"><div class="inner">
+    <div class="split">
+      <div class="split__copy reveal">
+        <p class="eyebrow">Systems thinking</p>
+        <h2 class="h-lg">Turning &ldquo;on-system?&rdquo; into a number. <span class="sub">A pass/fail audit tells you what&rsquo;s wrong on one frame &ndash; not whether adoption is improving file over file.</span></h2>
+        <p class="text">The Adoption Score weights five dimensions by how much each actually signals real adoption, rather than surface compliance.</p>
+      </div>
+      <div class="split__fig bars reveal" style="--d:120ms">
+        <div class="bar"><div class="bar__top"><b>Component coverage</b><span>35%</span></div><div class="bar__track"><i class="bar__fill" style="--w:100%"></i></div><p>The largest weight &ndash; using real components is the strongest signal of adoption.</p></div>
+        <div class="bar"><div class="bar__top"><b>Token coverage</b><span>30%</span></div><div class="bar__track"><i class="bar__fill" style="--w:85.7%"></i></div><p>Style checks that resolve to a token.</p></div>
+        <div class="bar"><div class="bar__top"><b>Detachment, inverse</b><span>15%</span></div><div class="bar__track"><i class="bar__fill" style="--w:42.9%"></i></div><p>Penalises frames named like a component that aren&rsquo;t actually linked to one.</p></div>
+        <div class="bar"><div class="bar__top"><b>Variant configuration</b><span>10%</span></div><div class="bar__track"><i class="bar__fill" style="--w:28.6%"></i></div><p>Instances with explicit component properties set, not left default.</p></div>
+        <div class="bar"><div class="bar__top"><b>Naming compliance</b><span>10%</span></div><div class="bar__track"><i class="bar__fill" style="--w:28.6%"></i></div><p>Smallest on purpose &ndash; naming matters for handoff, but it&rsquo;s cosmetic next to real use.</p></div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ======================= DRIFT + AI REVIEW (dark) =================== -->
+<section class="dark">
+  <canvas class="dark__bg" data-scene="aurora" data-hue="215" aria-hidden="true"></canvas>
+  <div class="wrap"><div class="inner sec" style="position:relative;z-index:1">
+    <div class="split" style="margin-bottom:96px">
+      <div class="split__copy reveal">
+        <p class="eyebrow" style="color:var(--p2-light)">Drift detection</p>
+        <h2 class="h-lg">The drift an audit alone can&rsquo;t see. <span class="sub">An instance still &ldquo;linked&rdquo; to CLUSTERS but locally overridden looks compliant in a file search while it&rsquo;s silently forked from the system.</span></h2>
+        <p class="text">The Detector separates that from full detachment and broken links, and tags every override as token-bound or uncontrolled &ndash; exactly the class of bug that slipped through on Buttons before the migration.</p>
+      </div>
+      <div class="split__fig chips reveal" style="--d:120ms;flex-direction:column;align-items:flex-start;gap:12px">
+        <span class="chip"><i style="background:#ff8fa8"></i>Detached &ndash; rebuilt from scratch, no link at all</span>
+        <span class="chip"><i style="background:#ffc76b"></i>Broken link &ndash; the source component is gone</span>
+        <span class="chip"><i style="background:var(--p2-light)"></i>Overridden &ndash; linked, but a fill swapped or a radius nudged</span>
+      </div>
+    </div>
+    <div class="split split--rev">
+      <div class="split__copy reveal">
+        <p class="eyebrow" style="color:var(--p2-light)">AI review</p>
+        <h2 class="h-lg">Writing the rubric, not just calling the API. <span class="sub">A fixed prompt forces structured, comparable output every time &ndash; instead of a free-text opinion that reads differently on every run.</span></h2>
+      </div>
+      <figure class="split__fig code reveal" style="--d:120ms">
+        <div class="code__bar"><i></i><i></i><i></i><span>DAT reviewer prompt</span></div>
+<pre>You are a Design Acceptance Test (DAT) reviewer. The FIRST image is
+the DEVELOPER-built screen. The SECOND image is the FIGMA DESIGN
+(source of truth).
+
+Compare them and identify visual mismatches across: colours,
+typography, spacing, component usage, icons, layout/alignment,
+and missing elements.
+
+Respond ONLY with a valid JSON object — no markdown, no backticks:
+<span class="k">{"summary":{"total":N,"critical":N,"major":N,"minor":N,"score":N},
+ "issues":[{"id":N,"title":"...","severity":"critical|major|minor",
+ "category":"colour|typography|spacing|component|icon|layout|missing",
+ "description":"what is wrong","fix":"what the dev should change"}]}</span>
+
+Score is 0-100 (100 = pixel perfect). Be specific and actionable.</pre>
+      </figure>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================ REFLECTION ============================ -->
+<section class="sec ruled">
+  <div class="wrap"><div class="inner">
+    <div class="callout reveal">
+      <div class="callout__l"><p class="eyebrow" style="margin-bottom:8px">Reflection</p><p class="h-md" style="font-weight:300">What I caught in my own tool.</p></div>
+      <div class="callout__r">
+        <p class="text">The first Audit only checked whether a value matched a token &ndash; a fill that happened to be #315ED1 passed, bound to the brand variable or not. The moment the token changes, an unbound-but-matching value doesn&rsquo;t follow it, and silently drifts.</p>
+        <p class="text">Fixing it meant reading Figma&rsquo;s Variables API properly &ndash; <code style="font-family:var(--mono);font-size:14px">getBoundVarName()</code> checks whether a property is genuinely linked to a live variable. The difference between a checker that looks rigorous and one that actually is.</p>
+      </div>
+    </div>
+    <div class="head" style="margin:96px 0 40px">
+      <div class="head__l reveal">
+        <p class="eyebrow">Outcome</p>
+        <h2 class="h-lg">A corrected foundation, enforced at the source. <span class="sub">The plugin is live and in active use across redPro design work.</span></h2>
+      </div>
+      <div class="head__r reveal" style="--d:120ms"><p class="text">Next: Badges, then the remaining 26 components, and the parked question of several hundred canvas elements still depending on deprecated legacy collections.</p></div>
+    </div>
+    <div class="stats reveal">
+      <div class="stat"><span class="stat__n stat__n--grad">1 of 28</span><span class="stat__t">Components migrated</span><span class="stat__d">Buttons &ndash; documented, templated, a11y bug fixed.</span></div>
+      <div class="stat"><span class="stat__n stat__n--grad">263 &rarr; 722</span><span class="stat__t">Lines, v3 to v5</span><span class="stat__d">From flag-and-auto-fix to scoring, drift classes and AI review.</span></div>
+      <div class="stat"><span class="stat__n stat__n--grad">4</span><span class="stat__t">Ways drift gets caught</span><span class="stat__d">Audit, Adoption Score, Detector, DAT.</span></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================ WHAT'S NEXT =========================== -->
+<section class="sec ruled" style="background:var(--wash)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <span class="plan-badge">Plan &ndash; not yet built</span>
+        <h2 class="h-lg">Designing with the system, not just checking against it. <span class="sub">Give an agent the system itself &ndash; tokens, components, rules, patterns &ndash; as structured knowledge, so it proposes correct designs instead of getting audited afterward.</span></h2>
+      </div>
+    </div>
+    <figure class="fig reveal" style="margin-bottom:40px">
+      <div class="fig__panel" style="background:#fff"><img src="../work/hubble/agent-plan.png" alt="Agentic HubbleUI plan: Knowledge, Agent and Execution layers" loading="lazy"></div>
+      <figcaption>Knowledge feeding a single system prompt, the Agent reasoning within it, Execution gated behind an approved plan.</figcaption>
+    </figure>
+    <div class="cards-3">
+      <article class="card reveal"><p class="card__num">01</p><h3 class="h-sm">Knowledge &ndash; machine-readable</h3><p class="text-sm">Tokens follow the same Primitive &rarr; Semantic &rarr; Component chain built for color. The component registry extends the Buttons template. A live Figma MCP feed keeps it current.</p></article>
+      <article class="card reveal" style="--d:100ms"><p class="card__num">02</p><h3 class="h-sm">Agent &ndash; the system as context</h3><p class="text-sm">Seven knowledge sources compile into one system prompt. Its guardrails turn &ldquo;don&rsquo;t hardcode a hex&rdquo; and &ldquo;Disabled is a state&rdquo; into constraints the agent can&rsquo;t reason around.</p></article>
+      <article class="card reveal" style="--d:200ms"><p class="card__num">03</p><h3 class="h-sm">Execution &ndash; gated by approval</h3><p class="text-sm">The agent proposes a plan first. Only once approved does it produce Figma frames, an HTML mockup and a spec together &ndash; a human stays the last check.</p></article>
+    </div>
+  </div></div>
+</section>
+
+<!-- ================================ NEXT ============================== -->
+<section class="sec ruled">
+  <div class="wrap"><div class="inner">
+    <a class="next reveal" href="redpro-homepage.html">
+      <div class="next__copy">
+        <p class="card__label">Next case study &middot; redBus &middot; 2025</p>
+        <h2 class="h-lg">redPro homepage dashboard</h2>
+        <p class="text">Turning a wall of metrics into a homepage that tells operators what to do next.</p>
+        <span class="link" style="margin-top:8px">Read the case study<svg class="arrow" viewBox="0 0 6 10" aria-hidden="true"><g><rect class="shaft" x="-8" y="4.1" width="11" height="1.8" fill="currentColor"/><path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8"/></g></svg></span>
+      </div>
+      <div class="next__art"><img src="../work/redpro-homepage.png" alt="" loading="lazy"></div>
+    </a>
+  </div></div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap" style="padding:0"><div class="row">
+    <span>&copy; 2026 Swaraj Kumar &middot; Bangalore, India</span>
+    <nav aria-label="Footer"><a href="../">Home</a><a href="../#work">Work</a><a href="https://www.linkedin.com/in/swaraj-k/" target="_blank" rel="noopener">LinkedIn</a></nav>
+  </div></div>
+</footer>
+<script src="case.js"></script>
+</body>
+</html>

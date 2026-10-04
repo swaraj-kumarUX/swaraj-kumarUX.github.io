@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>/* theme before first paint: saved choice, else the system setting */(()=>{let t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../assets/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c0f" media="(prefers-color-scheme: dark)">
+<title>Invoice reconciliation tool — Swaraj Kumar</title>
+<meta name="description" content="Case study: redesigning invoice reconciliation for bus operators at redBus and Bitla — from field research to a tested, trust-first AI Summary.">
+<link rel="preload" href="../assets/sohne-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="case.css">
+<style>:root{--p1:#3b85c8;--p2:#008075;--p1-light:#7fc1ff;--p2-light:#5ee0c6}</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js')</script>
+
+<header class="nav" id="nav">
+  <div class="wrap" style="padding:0">
+    <div class="nav__row">
+      <a class="nav__brand" href="../#work"><b>Swaraj Kumar</b><span>Senior UX Designer</span></a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="../#work">Work</a>
+        <!-- About hidden until the page is ready: <a href="../index.html#about" target="_blank" rel="noopener">About</a> -->
+        <a href="../assets/Swaraj-Kumar-Resume.pdf" target="_blank" rel="noopener">Resume</a>
+        <a class="btn btn--primary btn--linkedin" href="https://www.linkedin.com/in/swaraj-k/" target="_blank" rel="noopener">LinkedIn<svg class="arrow" viewBox="0 0 6 10" aria-hidden="true"><g><rect class="shaft" x="-8" y="4.1" width="11" height="1.8" fill="currentColor"/><path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8"/></g></svg></a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- =============================== HERO =============================== -->
+<section class="hero ruled" aria-labelledby="title">
+  <canvas class="hero__bg" data-scene="ledgers" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="inner">
+      <div class="hero__crumb"><a href="../#work">Work</a><i></i><span class="sub">Case study &middot; redBus / Bitla</span></div>
+      <div class="grid">
+        <div class="hero__copy">
+          <p class="eyebrow">Invoice reconciliation tool</p>
+          <h1 class="h-xxl" id="title">Explaining <span class="sub">why</span> a number is wrong, not just that it is.</h1>
+          <p class="lede">Operators didn&rsquo;t need a cleaner table of mismatches &ndash; they needed to know whether a difference was worth their time. I redesigned the flow around that, tested two directions head-to-head with real operators, and shipped the one that made the &ldquo;why&rdquo; visible without a click.</p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#process">Read the process<svg class="arrow" viewBox="0 0 6 10" aria-hidden="true"><g><rect class="shaft" x="-8" y="4.1" width="11" height="1.8" fill="currentColor"/><path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8"/></g></svg></a>
+            <a class="btn btn--secondary" href="#screens">See the final screens</a>
+          </div>
+        </div>
+        <dl class="hero__facts">
+          <div class="fact"><dt>Role</dt><dd>UX lead, solo &ndash; discovery through handoff</dd></div>
+          <div class="fact"><dt>Team</dt><dd>redBus reconciliation team &middot; Bitla/ticketsimply engineering</dd></div>
+          <div class="fact"><dt>Tools</dt><dd>Figma &middot; FigJam &middot; HTML prototyping</dd></div>
+          <div class="fact"><dt>Timeframe</dt><dd>May &ndash; Sep 2026</dd></div>
+          <div class="fact"><dt>Status</dt><dd>Design-validated, pre-launch</dd></div>
+        </dl>
+      </div>
+      <div class="hero__stage">
+        <div class="frame hero__main reveal">
+          <div class="frame__bar"><i></i><i></i><i></i><span>Reconciliation report</span></div>
+          <img src="../work/reconciliation-report.png" alt="Reconciliation summary: a ₹30,250 difference, 33 mismatched PNRs, broken down by two donut charts above accordions of discrepancy categories" width="1440" height="1521">
+        </div>
+        <div class="frame hero__side reveal" style="--d:150ms">
+          <img src="../work/ota/escalate-modal.png" alt="Escalate discrepancies to redBus dialog, pre-filled with both sides of the difference" width="650" height="648">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= OBJECTIVE ============================ -->
+<section class="sec ruled" id="objective" style="border-top:1px solid var(--rule)">
+  <div class="wrap"><div class="inner">
+    <div class="objective">
+      <div class="objective__q reveal">
+        <p class="eyebrow" style="margin-bottom:20px">Objective</p>
+        <h2 class="h-xl">From finding to escalation in one step. <span class="sub">Design a reconciliation experience that explains why a number is wrong &ndash; for operators who don&rsquo;t want to learn a new system, they want to understand their money.</span></h2>
+      </div>
+      <p class="objective__note text reveal" style="--d:120ms">The existing flow, and the tool operators actually reached for instead, both stopped at &ldquo;here&rsquo;s what doesn&rsquo;t match.&rdquo; Neither ever explained why &ndash; so every reconciliation still ended in manual digging.</p>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================== CONTEXT ============================= -->
+<section class="sec ruled" id="context" style="background:var(--wash)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Context</p>
+        <h2 class="h-lg">What operators were dealing with. <span class="sub">The existing Ticketsimply flow does the mechanical part correctly &ndash; it just never says why.</span></h2>
+      </div>
+      <div class="head__r reveal" style="--d:120ms">
+        <p class="text">Bus operators reconcile every invoice redBus sends them against their own records &ndash; checking that what they were paid matches what they believe they&rsquo;re owed, PNR by PNR, invoice after invoice.</p>
+        <p class="text">An operator gets a spreadsheet of flagged rows and has to go dig &ndash; manually, invoice by invoice &ndash; before deciding whether a difference is even worth chasing.</p>
+      </div>
+    </div>
+    <div class="stack">
+      <figure class="fig reveal">
+        <div class="fig__panel fig__panel--scroll" style="background:#fff"><img src="../work/ota/existing-flow.png" alt="Existing Ticketsimply reconciliation flow, annotated" width="2200" height="282" loading="lazy"></div>
+        <figcaption>The legacy flow, annotated. Every step works &ndash; the report at the end just never says why a number is wrong.</figcaption>
+      </figure>
+      <figure class="fig reveal">
+        <div class="fig__panel fig__panel--scroll" style="background:#fff"><img src="../work/ota/legacy-screens.png" alt="Real screenshots of the legacy flow, ending in an unexplained Excel-style report" width="2200" height="566" loading="lazy"></div>
+        <figcaption>The real flow, screen by screen &ndash; ending in a raw, Excel-style report with mismatches listed and no reason attached to any of them.</figcaption>
+      </figure>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================== SCOPING ============================= -->
+<section class="sec ruled" id="scope">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Scoping</p>
+        <h2 class="h-lg">A trust product before it&rsquo;s a UI problem. <span class="sub">Operators act on these numbers with real money &ndash; that shaped how I scoped the work.</span></h2>
+      </div>
+    </div>
+    <div class="cards-2">
+      <article class="card reveal">
+        <p class="card__label">Challenge</p>
+        <p class="h-md" style="font-weight:300">Financial data an operator can act on without re-verifying it by hand &ndash; while the tool they use today (Gaadi Kharcha) has trained them not to trust an explanation they can&rsquo;t check.</p>
+      </article>
+      <article class="card card--wash reveal" style="--d:100ms">
+        <p class="card__label">Scope</p>
+        <ul class="text-sm" style="display:flex;flex-direction:column;gap:10px;font-size:16px">
+          <li>&#10003;&ensp;Field research with real operators</li>
+          <li>&#10003;&ensp;Competitive teardown of Gaadi Kharcha</li>
+          <li>&#10003;&ensp;A redesigned auto-reconciliation flow</li>
+          <li>&#10003;&ensp;A tested summary screen</li>
+          <li>&#10003;&ensp;An AI Summary layer with explicit trust rules</li>
+          <li>&#10003;&ensp;Production handoff</li>
+        </ul>
+      </article>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================== PROCESS ============================= -->
+<section class="sec ruled" id="process" style="border-top:1px solid var(--rule)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Process</p>
+        <h2 class="h-lg">Three decisions that carried the redesign.</h2>
+      </div>
+    </div>
+    <div class="cards-3">
+      <article class="card reveal">
+        <div class="icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/><path d="M9.2 9.2a2.4 2.4 0 1 1 2.6 3.4V14"/></svg></div>
+        <p class="card__num">01</p>
+        <h3 class="h-sm">Reframe the question &ndash; from &ldquo;what&rdquo; to &ldquo;why&rdquo;</h3>
+        <p class="text-sm">Two in-person operator interviews turned a screen-level brief into a product-level reframe: operators don&rsquo;t want a cleaner mismatch table, they want to know whether a difference is worth their time.</p>
+        <a class="link" href="#research" style="margin-top:auto;padding-top:8px">Research &rarr;</a>
+      </article>
+      <article class="card reveal" style="--d:100ms">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.6-5.7L20 8.7"/><path d="M20 4v4.7h-4.7"/><path d="M20 12a8 8 0 0 1-13.6 5.7L4 15.3"/><path d="M4 20v-4.7h4.7"/></svg></div>
+        <p class="card__num">02</p>
+        <h3 class="h-sm">Cut the friction operators never asked to keep</h3>
+        <p class="text-sm">Two manual uploads became an auto-reconciliation flow, syncing directly from redPro via API &ndash; removing the exact step operators complained about, unprompted, in research.</p>
+        <a class="link" href="#redesign" style="margin-top:auto;padding-top:8px">Redesign &rarr;</a>
+      </article>
+      <article class="card reveal" style="--d:200ms">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.1-7.5 9.5-4.3-1.4-7.5-4.9-7.5-9.5V6z"/><path d="M8.6 12.2l2.3 2.3 4.5-4.7"/></svg></div>
+        <p class="card__num">03</p>
+        <h3 class="h-sm">Earn trust with rules, not just polish</h3>
+        <p class="text-sm">The AI Summary layer only states what it can prove &ndash; a rule that exists because I caught it lying to me first, in my own first draft.</p>
+        <a class="link" href="#system" style="margin-top:auto;padding-top:8px">System &rarr;</a>
+      </article>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================== RESEARCH ============================ -->
+<section class="sec ruled" id="research" style="background:var(--wash)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">01 &middot; Research</p>
+        <h2 class="h-lg">Two operators, one afternoon each. <span class="sub">I took a printed questionnaire on the road expecting to validate a screen. Their answers reframed the whole product instead.</span></h2>
+      </div>
+    </div>
+    <div class="research">
+      <div class="research__sheets reveal">
+        <img class="sheet sheet--a" src="../work/ota/seabird.jpg" alt="Handwritten interview sheet, Seabird Tourists" loading="lazy">
+        <img class="sheet sheet--b" src="../work/ota/rajesh.jpg" alt="Handwritten interview sheet, Rajesh Transports" loading="lazy">
+      </div>
+      <div class="research__quotes">
+        <figure class="quote reveal" style="--d:100ms">
+          <figcaption class="quote__who">Seabird Tourists &middot; 10 May 2026</figcaption>
+          <blockquote>&ldquo;Reconciliation means confirming me the difference and where the difference is going &ndash; it&rsquo;s like matching.&rdquo;</blockquote>
+        </figure>
+        <figure class="quote quote--teal reveal" style="--d:200ms">
+          <figcaption class="quote__who">Rajesh Transports &middot; 12 May 2026</figcaption>
+          <blockquote>&ldquo;Justification.&rdquo;</blockquote>
+          <p class="text-sm" style="margin-top:8px">The entire answer to &ldquo;what does resolved mean to you.&rdquo;</p>
+        </figure>
+        <p class="text reveal" style="--d:300ms">Neither operator described wanting a cleaner table. Both described wanting to be told why. Two more answers on those sheets fed directly into shipped decisions.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:72px">
+      <div class="trace reveal">
+        <div class="trace__cell"><p class="card__label">Rajesh, unprompted</p><blockquote>&ldquo;Offers and deals opted by operators are not tracked, and that creates difference.&rdquo;</blockquote></div>
+        <div class="trace__arrow"><span>&rarr;</span></div>
+        <div class="trace__cell trace__cell--out"><p class="card__label" style="color:var(--teal)">Shipped as</p><p class="text">&ldquo;Incorrect offer charges&rdquo; exists as its own discrepancy category, rather than a generic &ldquo;other.&rdquo;</p></div>
+      </div>
+      <div class="trace reveal">
+        <div class="trace__cell"><p class="card__label">Rajesh, on default detail level</p><blockquote>&ldquo;Don&rsquo;t want to see every detail &ndash; summary, see root-level summary, service and bus number. They want NRR.&rdquo;</blockquote></div>
+        <div class="trace__arrow"><span>&rarr;</span></div>
+        <div class="trace__cell trace__cell--out"><p class="card__label" style="color:var(--teal)">Shipped as</p><p class="text">The AI Summary&rsquo;s first rule: lead with the state, not the problem count.</p></div>
+      </div>
+    </div>
+
+    <div class="head" style="margin:96px 0 32px">
+      <div class="head__l reveal">
+        <h3 class="h-md" style="font-weight:300;font-size:26px">Same gap, different product. <span class="sub">Both operators, independently, named Gaadi Kharcha as what they actually use today &ndash; Seabird called it &ldquo;easy to use for any layman.&rdquo;</span></h3>
+      </div>
+      <div class="head__r reveal" style="--d:100ms"><p class="text">It has the same gap: two manual uploads per run, and mismatches flagged without ever being explained.</p></div>
+    </div>
+    <figure class="fig reveal">
+      <div class="fig__panel fig__panel--scroll" style="background:#fff"><img src="../work/ota/gaadi-kharcha.png" alt="Gaadi Kharcha's competing reconciliation flow" width="2200" height="288" loading="lazy"></div>
+      <figcaption>Gaadi Kharcha &ndash; the tool both operators use today. Same gap, different product.</figcaption>
+    </figure>
+  </div></div>
+</section>
+
+<!-- ============================ PULL QUOTE ============================ -->
+<section class="dark">
+  <canvas class="dark__bg" data-scene="aurora" aria-hidden="true"></canvas>
+  <div class="wrap"><div class="inner sec">
+    <figure class="pull reveal">
+      <blockquote>&ldquo;If I know <em>WHY</em>, the difference is manageable.&rdquo;</blockquote>
+      <figcaption>The line that ended up driving every downstream decision</figcaption>
+    </figure>
+  </div></div>
+</section>
+
+<!-- ============================== REDESIGN ============================ -->
+<section class="sec ruled" id="redesign">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">02 &middot; Redesign</p>
+        <h2 class="h-lg">Auto-sync, not two manual uploads. <span class="sub">Bitla GDS pulls data directly from redPro, redBus&rsquo;s own operator database, via API &ndash; and the bank statement upload becomes optional rather than blocking.</span></h2>
+      </div>
+      <div class="head__r reveal" style="--d:120ms">
+        <p class="text">The original flow required uploading both a bank statement and an OTA invoice by hand &ndash; the exact step operators complained about, unprompted.</p>
+      </div>
+    </div>
+    <figure class="fig reveal">
+      <div class="fig__panel fig__panel--scroll"><img src="../work/ota/new-flow.png" alt="The redesigned auto-reconciliation user flow" width="2200" height="403" loading="lazy"></div>
+      <figcaption>The redesigned flow &ndash; auto-sync from redPro, the full escalation lifecycle, and a parallel lane for service-level discrepancies.</figcaption>
+    </figure>
+    <aside class="card card--wash reveal" style="margin-top:32px;flex-direction:row;gap:20px;align-items:flex-start">
+      <div class="icon" style="flex:none;margin:0;background:rgba(83,58,253,.1)"><svg viewBox="0 0 24 24" style="stroke:var(--brand)"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg></div>
+      <div>
+        <p class="h-sm" style="margin-bottom:6px">Flagged, not resolved unilaterally</p>
+        <p class="text-sm">Non-redBus OTAs (AbhiBus, Paytm, and others) still require manual upload, since no equivalent API exists for them yet. Whether that stays the final state or is a phase-1 limitation is an open question I flagged rather than resolved unilaterally.</p>
+      </div>
+    </aside>
+  </div></div>
+</section>
+
+<!-- ============================== TESTING ============================= -->
+<section class="sec ruled" id="testing" style="background:var(--wash)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Testing</p>
+        <h2 class="h-lg">Two real layouts, tested head-to-head. <span class="sub">Rather than ship a single direction on instinct, I designed two competing versions of the core summary screen and ran a structured comparison.</span></h2>
+      </div>
+      <div class="head__r reveal" style="--d:120ms">
+        <p class="text">Comprehension questions with known correct answers, timed tasks &ndash; and one question that cut past politeness.</p>
+      </div>
+    </div>
+    <div class="versus">
+      <article class="version version--win reveal">
+        <div class="version__shot"><img src="../work/reconciliation-report.png" alt="V1: donut-chart breakup plus accordions" loading="lazy"></div>
+        <div class="version__body">
+          <span class="badge">&#10003; Selected</span>
+          <p class="card__label">Concept 1 &mdash; V1</p>
+          <h3 class="h-md">Chart breakup + accordions</h3>
+          <p class="text-sm">Two donut charts visualise the invoice and difference-receivable breakup by category, on top of the same accordion detail as V2. Operators saw the biggest slice of the gap before opening a single row.</p>
+        </div>
+      </article>
+      <article class="version reveal" style="--d:120ms">
+        <div class="version__shot"><img src="../work/ota/v2.png" alt="V2: accordions only, no chart breakup" loading="lazy"></div>
+        <div class="version__body">
+          <span class="badge badge--muted">Concept 2 &mdash; V2</span>
+          <p class="card__label">&nbsp;</p>
+          <h3 class="h-md">Accordions only</h3>
+          <p class="text-sm">Simpler, cleaner-looking screen &ndash; same headline number, same accordion detail underneath, but no visual breakup. Operators could see that there was a gap, not what kind, without digging in.</p>
+        </div>
+      </article>
+    </div>
+    <p class="ask reveal"><small>The question that cut past politeness</small>&ldquo;Would you send a dispute to redBus based only on this, without checking by hand?&rdquo; <span class="sub">A screen operators like but don&rsquo;t trust enough to act on hasn&rsquo;t solved the actual problem.</span></p>
+    <div class="verdict reveal">
+      <div class="verdict__l"><p class="eyebrow eyebrow--teal" style="margin-bottom:8px">Why V1 won</p><p class="h-md" style="font-weight:300">Data visualisation, not information architecture.</p></div>
+      <div class="verdict__r"><p class="text">Both versions gave operators identical accordions and identical PNR-level detail. V1&rsquo;s charts made the &ldquo;why&rdquo; visible without a click. V2 made operators go looking for it, which quietly reintroduced the exact problem the redesign existed to fix.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- =============================== SYSTEM ============================= -->
+<section class="dark" id="system">
+  <canvas class="dark__bg" data-scene="aurora" aria-hidden="true"></canvas>
+  <div class="wrap"><div class="inner sec">
+    <div class="head" style="position:relative;z-index:1">
+      <div class="head__l reveal">
+        <p class="eyebrow" style="color:var(--p2-light)">03 &middot; System</p>
+        <h2 class="h-lg">The AI Summary, and the rules that govern it. <span class="sub">It answers the operator&rsquo;s real question &ndash; fine or not fine, and what kind of not-fine &ndash; in one read, before they touch a table.</span></h2>
+      </div>
+    </div>
+    <div class="rules">
+      <div class="rule reveal"><span class="rule__n">01</span><h3>Lead with the state</h3><p>&ldquo;97% reconciled,&rdquo; not &ldquo;33 mismatches found.&rdquo; Opening with the problem count turns every invoice into a perceived crisis.</p></div>
+      <div class="rule reveal" style="--d:80ms"><span class="rule__n">02</span><h3>Never overclaim confidence</h3><p>Caught a real bug where the category breakdown didn&rsquo;t sum to the headline number. Now it only states what it can trace to a real value.</p></div>
+      <div class="rule reveal" style="--d:160ms"><span class="rule__n">03</span><h3>Traceable, not just readable</h3><p>Every claim is one click from its source &ndash; clicking &ldquo;33 PNRs&rdquo; filters straight to those rows.</p></div>
+      <div class="rule reveal" style="--d:240ms"><span class="rule__n">04</span><h3>Scoped to where it helps</h3><p>The escalation screen gets a terse one-line version, so it never competes with the audit trail for attention.</p></div>
+    </div>
+    <div class="ai-demo">
+      <div class="ai-demo__copy reveal">
+        <div class="summary" aria-label="33 mismatches found, restated as 97% reconciled"><s>33 mismatches found</s><b>97% reconciled</b></div>
+        <p class="text" style="margin-top:12px">The same pattern, scaled down &ndash; one line on the escalation screen, so it doesn&rsquo;t compete with the audit trail below it.</p>
+      </div>
+      <figure class="ai-demo__shot reveal" style="--d:120ms"><img src="../work/ota/escalation-status.png" alt="AI Summary applied to the escalation status screen" loading="lazy"></figure>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================== VISUAL LANGUAGE ========================= -->
+<section class="sec ruled" id="tokens">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">Visual language</p>
+        <h2 class="h-lg">Built in BITLA&rsquo;s real design tokens. <span class="sub">No exploratory reskin &ndash; every screen was built in the production BITLA system, so what operators tested is what could ship as-is.</span></h2>
+      </div>
+    </div>
+    <div class="cards-4">
+      <div class="swatch reveal"><div class="swatch__chip" style="background:#3B85C8"></div><div class="swatch__meta"><b>Bitla blue</b><code>#3B85C8</code></div></div>
+      <div class="swatch reveal" style="--d:80ms"><div class="swatch__chip" style="background:#008075"></div><div class="swatch__meta"><b>Teal accent</b><code>#008075</code></div></div>
+      <div class="swatch reveal" style="--d:160ms"><div class="swatch__chip" style="background:#202124"></div><div class="swatch__meta"><b>Ink</b><code>#202124</code></div></div>
+      <div class="swatch reveal" style="--d:240ms"><div class="swatch__chip" style="background:#F4F1EA;border-bottom:1px solid var(--rule)"></div><div class="swatch__meta"><b>Card / paper</b><code>#F4F1EA</code></div></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============================== SCREENS ============================= -->
+<section class="sec ruled" id="screens" style="border-top:1px solid var(--rule)">
+  <div class="wrap"><div class="inner">
+    <div class="head">
+      <div class="head__l reveal">
+        <p class="eyebrow">More from this flow</p>
+        <h2 class="h-lg">Six screens, end to end. <span class="sub">From the dashboard to the escalation history.</span></h2>
+      </div>
+    </div>
+    <div class="gallery">
+      <figure class="shot reveal"><div class="shot__img"><img src="../work/ota/dashboard.png" alt="Reconciliation Center dashboard" loading="lazy"></div><figcaption class="shot__cap">Dashboard<span>01</span></figcaption></figure>
+      <figure class="shot reveal" style="--d:80ms"><div class="shot__img"><img src="../work/ota/reconciling.png" alt="Reconciling stepper" loading="lazy"></div><figcaption class="shot__cap">Reconciling<span>02</span></figcaption></figure>
+      <figure class="shot reveal" style="--d:160ms"><div class="shot__img"><img src="../work/pnr-table.png" alt="PNR details table" loading="lazy"></div><figcaption class="shot__cap">PNR details<span>03</span></figcaption></figure>
+      <figure class="shot reveal"><div class="shot__img" style="display:grid;place-items:center"><img src="../work/ota/escalate-modal.png" alt="Escalate to redBus modal" loading="lazy" style="width:auto;height:92%;object-fit:contain;border-radius:8px"></div><figcaption class="shot__cap">Escalate modal<span>04</span></figcaption></figure>
+      <figure class="shot reveal" style="--d:80ms"><div class="shot__img"><img src="../work/ota/escalations.png" alt="Escalations list" loading="lazy"></div><figcaption class="shot__cap">Escalations<span>05</span></figcaption></figure>
+      <figure class="shot reveal" style="--d:160ms"><div class="shot__img"><img src="../work/ota/history.png" alt="Past reconciliations" loading="lazy"></div><figcaption class="shot__cap">History<span>06</span></figcaption></figure>
+    </div>
+  </div></div>
+</section>
+
+<!-- ================================ NEXT ============================== -->
+<section class="sec ruled" style="padding-top:0">
+  <div class="wrap"><div class="inner">
+    <a class="next reveal" href="hubbleui.html">
+      <div class="next__copy">
+        <p class="card__label">Next case study &middot; redBus &middot; 2026</p>
+        <h2 class="h-lg">HubbleUI design system</h2>
+        <p class="text">Rebuilt color foundation and built an AI-powered Figma plugin.</p>
+        <span class="link" style="margin-top:8px">Read the case study<svg class="arrow" viewBox="0 0 6 10" aria-hidden="true"><g><rect class="shaft" x="-8" y="4.1" width="11" height="1.8" fill="currentColor"/><path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8"/></g></svg></span>
+      </div>
+      <div class="next__art"><img src="../work/hubbleui.png" alt="" loading="lazy"></div>
+    </a>
+  </div></div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap" style="padding:0"><div class="row">
+    <span>&copy; 2026 Swaraj Kumar &middot; Bangalore, India</span>
+    <nav aria-label="Footer"><a href="../">Home</a><a href="../#work">Work</a><a href="https://www.linkedin.com/in/swaraj-k/" target="_blank" rel="noopener">LinkedIn</a></nav>
+  </div></div>
+</footer>
+
+<script src="case.js"></script>
+</body>
+</html>

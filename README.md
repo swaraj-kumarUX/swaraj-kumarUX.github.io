@@ -1,41 +1,14 @@
 # Swaraj Kumar — Portfolio
 
-The personal portfolio of **Swaraj Kumar**, Senior UX Designer at redBus (MakeMyTrip group).
+Portfolio of **Swaraj Kumar**, Senior UX Designer at redBus. Live at **https://swaraj-kumarux.github.io/**
 
-An immersive, scroll-driven WebGL experience (Three.js) that opens into a personal story and three in-depth UX case studies:
+Plain HTML/CSS/JS, no build step — edit the files directly.
 
-- **RPW Homepage Revamp** — a data-driven operator dashboard
-- **revMax Self-Serve on redPro** — a self-serve fare engine
-- **Marketplace Hygiene Dashboard** — a triage-first operator dashboard
+- `index.html` — home page (hero, work, experience, get in touch)
+- `case-studies/` — invoice reconciliation, HubbleUI, redPro homepage (shared `case.css` / `case.js`)
+- `work/` — screenshots; `assets/` — resume, video, favicons
+- `404.html` and the `work/*.html` stubs redirect links from earlier versions of the portfolio
 
-## Stack
+Type: Söhne (Klim Type Foundry), self-hosted in `assets/` and embedded in `index.html`.
 
-Hand-built static site — no framework, no build step.
-
-- **Three.js** (via CDN import map) for the 3D world
-- **Lenis** for smooth scrolling on case-study pages
-- Vanilla HTML / CSS / JS, with a shared `enhance.js` / `enhance.css` interaction layer (custom cursor, magnetic UI, page transitions, light/dark theme)
-
-## Run locally
-
-Any static server works, e.g.:
-
-```bash
-npx serve .
-# or
-node server.js   # serves on http://localhost:4321
-```
-
-## Structure
-
-```
-index.html          # home — WebGL world + story + work grid
-world.js            # the Three.js scene
-enhance.css/.js     # shared polish layer (cursor, theme, transitions)
-work/               # the three case-study pages
-assets/             # case-study imagery
-```
-
----
-
-© Swaraj Kumar · swaraj.kumar0103@gmail.com
+The previous site is kept as the git tag `archive/immersive-webgl`.
