@@ -453,7 +453,7 @@ h1{margin:0;font-weight:300}
   grid-row-start:2;
   line-height:1.15;
   max-width:32ch;
-  color:#ddd600;
+  color:#50617a;               /* subtext; solid so it reads the same in every browser */
   text-wrap:pretty;
 }
 @media (max-width:639px){
@@ -468,7 +468,6 @@ h1{margin:0;font-weight:300}
   letter-spacing:normal;
 }
 @media (min-width:940px){.hero-section__title{grid-column:2 / -2}}
-@supports (-webkit-touch-callout:none){.hero-section__title{color:#c8c33b}}
 
 .hero-section__title-main{
   font-style:normal;
@@ -487,6 +486,7 @@ h1{margin:0;font-weight:300}
   color:rgba(0,14,255,.5);
 }
 .hero-section__title--foreground .hero-section__title-main{color:#2d2564}
+.hero-section__title--foreground .hero-section__title-copy{color:transparent}   /* no blended overlay on the subtext */
 .hero-section__title--foreground ::selection{
   color:var(--hds-color-core-neutral-0);
   background-color:color-mix(in hsl,var(--hds-color-util-brand-925) 70%,transparent);
