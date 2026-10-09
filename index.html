@@ -581,6 +581,53 @@ h1{margin:0;font-weight:300}
 .hero-gradient{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none}
 .hero-gradient__canvas{display:block;width:100%;height:100%;opacity:0}
 .hero-gradient.is-ready .hero-gradient__canvas{opacity:1;transition:opacity 1.6s ease-out .1s}
+
+/* ---------------------------------------------------------------------
+ * Snake: an easter egg in the hero. Clicking its empty space ripples a
+ * dot grid out from the click (the ribbon keeps flowing, lighter); the copy stays on top
+ * and the snake, made of the same halftone dots, slips behind it.
+ * ------------------------------------------------------------------- */
+.snake{position:absolute;z-index:1;display:none;flex-direction:column;gap:14px;touch-action:none;outline:none}
+.snake.is-open{display:flex}
+/* top-right of the board: the score, then a frosted close button */
+.snake__bar{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:flex-end;gap:8px;pointer-events:none;opacity:0;transform:translateY(-6px);
+  transition:opacity .5s ease .25s,transform .5s cubic-bezier(.22,1,.36,1) .25s}
+.snake.is-in .snake__bar{opacity:1;transform:none}
+/* live score and high score, in the same frosted chip as the close button */
+.snake__best{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 16px;border-radius:999px;font-size:14px;color:#64748d;
+  background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 0 0 1px rgba(6,27,49,.08),0 8px 24px -12px rgba(50,50,93,.3)}
+.snake__best b{color:#061b31;font-weight:500;font-variant-numeric:tabular-nums}
+.snake__best i{width:1px;height:16px;margin:0 6px;background:currentColor;opacity:.3}
+/* the live score pops each time a dot is eaten */
+.snake__now-n{display:inline-block;min-width:2ch}
+.snake__now-n.is-pop{animation:snakePop .32s cubic-bezier(.22,1,.36,1)}
+@keyframes snakePop{40%{transform:scale(1.35);color:#1a6fd0}}
+@media (prefers-reduced-motion:reduce){.snake__now-n.is-pop{animation:none}}
+html[data-theme="dark"] .snake__best{color:#a6adb8;background:rgba(14,16,21,.84);box-shadow:0 0 0 1px rgba(255,255,255,.1),0 8px 24px -12px rgba(0,0,0,.6)}
+html[data-theme="dark"] .snake__best b{color:#f3f6fc}
+.snake__exit{pointer-events:auto;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;color:#50617a;
+  background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:0 0 0 1px rgba(6,27,49,.08),0 8px 24px -12px rgba(50,50,93,.3);transition:color .2s,transform .2s}
+.snake__exit:hover,.snake__exit:focus-visible{color:#061b31;transform:scale(1.06)}
+.snake__exit:focus-visible{outline:2px solid #1a6fd0;outline-offset:2px}
+html[data-theme="dark"] .snake__exit{color:#a6adb8;background:rgba(14,16,21,.84);box-shadow:0 0 0 1px rgba(255,255,255,.1),0 8px 24px -12px rgba(0,0,0,.6)}
+html[data-theme="dark"] .snake__exit:hover,html[data-theme="dark"] .snake__exit:focus-visible{color:#f3f6fc}
+.snake__board{position:relative;flex:1;min-height:0}
+.snake__board canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-section__layout-grid{transition:opacity .45s ease,transform .6s cubic-bezier(.22,1,.36,1),filter .45s ease}
+/* the ribbon keeps flowing, lighter, so the snake reads on top of it */
+.hero-gradient{transition:opacity .6s ease}
+.is-snake .hero-gradient{opacity:.35}
+/* the column's side rules normally stop above the ribbon; with the grid drawn there,
+   carry them on to the bottom of the hero (position and colour set by the script) */
+.is-snake::after{content:"";position:absolute;z-index:1;pointer-events:none;bottom:0;
+  left:var(--rule-left,0);width:var(--rule-width,0);top:var(--rule-top,100%);
+  border-inline:1px solid var(--rule-color,transparent);box-sizing:border-box}
+/* the copy stays readable and clickable above the board */
+.is-snake .hero-section__layout-grid > *{position:relative;z-index:2}
+@media (prefers-reduced-motion:reduce){
+  .snake__bar,.hero-section__layout-grid,.hero-gradient{transition:none}
+}
 /* the hover swell, carried below the hero: a fixed layer above section
    backgrounds and below their content */
 .cursor-dots{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -2185,6 +2232,15 @@ button{font-family:inherit}
     </div>
   </div>
 
+  <!-- Snake easter egg: opens when the hero's empty space is clicked -->
+  <div class="snake" id="snake" role="application" aria-label="Snake game" aria-roledescription="game" tabindex="-1">
+    <div class="snake__bar">
+      <span class="sr-only">Snake. Score <span class="snake__score" aria-live="polite">0</span>. <span class="snake__hint">Arrow keys to move &middot; Esc to exit</span></span>
+      <span class="snake__best" aria-hidden="true"><b class="snake__now-n">0</b><i></i>HI <b class="snake__best-n">0</b></span>
+      <button type="button" class="snake__exit" aria-label="Exit the game"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="snake__board"><canvas aria-hidden="true"></canvas></div>
+  </div>
 </section>
 <section class="hds-color-mode section section--white hds-mode--light modular-solutions" id="work">
   <div class="section-container section-row modular-solutions-section">
@@ -6250,6 +6306,278 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
       history.replaceState(null, '', '#stats-section');
     });
   });
+})();
+</script>
+<script>
+/* =====================================================================
+ * Snake, hidden in the hero. Click (or tap) its empty space: a faint dot
+ * grid ripples out from the click (the ribbon keeps flowing), around the copy,
+ * which stays on top; the snake slips behind it and food never lands there. The snake is a line of the page's halftone dots, small at the
+ * tail and growing to the head (which has eyes); food is an aqua dot.
+ * Edges wrap around; only running into itself ends a game.
+ * Arrow keys / WASD or swipes to steer, Space to play again, Esc to exit.
+ * Pauses while the hero is off screen.
+ * ===================================================================== */
+(() => {
+  const hero = document.querySelector('.hero-section-container');
+  const box = document.getElementById('snake');
+  if (!hero || !box) return;
+  const grid = hero.querySelector('.hero-section__layout-grid');
+  const canvas = box.querySelector('canvas'), ctx = canvas.getContext('2d');
+  const scoreEl = box.querySelector('.snake__score'), hintEl = box.querySelector('.snake__hint'), bestEl = box.querySelector('.snake__best-n'), nowEl = box.querySelector('.snake__now-n');
+  // the game counts dots eaten; players see points, 10 per dot
+  const PTS = 10, pts = n => n * PTS;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const touch = matchMedia('(hover: none)').matches;
+  const css = getComputedStyle(document.documentElement);
+  const col = v => css.getPropertyValue(v).trim();
+  const BODY = [col('--hero-dots-0') || '#315ed1', col('--hero-dots-1') || '#0098ee'];
+  const FOOD = col('--hero-dots-2') || '#19d3c5';
+  let best = 0; try { best = +localStorage.getItem('snakeBest') || 0; } catch (e) {}
+
+  let open = false, cell = 30, cols = 0, rows = 0, w = 0, h = 0, dpr = 1;
+  let snake = [], dir = [1, 0], queue = [], food = null, score = 0;
+  let blocked = new Set();                      // cells under the copy: food never lands there
+  let diedAt = 0;
+  let state = 'idle', step = 110, acc = 0, last = 0, raf = 0, born = 0, origin = [0, 0], visible = true;
+
+  // "empty space" = not a link/button and not on the glyphs of any text
+  const range = document.createRange();
+  const onText = (t, x, y) => {
+    if (t.closest('a, button, input, [data-video-open], img, svg')) return true;
+    for (const el of [t, t.parentElement]) {
+      if (!el) continue;
+      for (const n of el.childNodes) if (n.nodeType === 3 && n.textContent.trim()) {
+        range.selectNodeContents(n);
+        for (const r of range.getClientRects()) if (x >= r.left - 6 && x <= r.right + 6 && y >= r.top - 4 && y <= r.bottom + 4) return true;
+      }
+    }
+    return false;
+  };
+
+  const place = () => {
+    // the board fills the hero's content column, down to above the fold line
+    const hr = hero.getBoundingClientRect(), gr = grid.getBoundingClientRect();
+    // from just under the header (the hero's top edge) down, across the content column
+    const left = gr.left - hr.left, top = 12, width = gr.width;
+    // ends above the fold line, and within the window so the status line under it shows
+    const bottom = Math.max(top + 300, Math.min(hr.height - (innerWidth < 640 ? 24 : 56), innerHeight - hr.top - 16));
+    Object.assign(box.style, { left: left + 'px', top: top + 'px', width: width + 'px', height: (bottom - top) + 'px' });
+    const r = box.querySelector('.snake__board').getBoundingClientRect();
+    dpr = Math.min(2, devicePixelRatio || 1);
+    cell = innerWidth < 640 ? 24 : 30;
+    cols = Math.max(8, Math.floor(r.width / cell)); rows = Math.max(6, Math.floor(r.height / cell));
+    w = r.width; h = r.height;
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // extend the content column's side rules below it, to the hero's bottom edge
+    const lay = hero.querySelector('.hero-section__layout');
+    if (lay) {
+      const lr = lay.getBoundingClientRect(), lc = getComputedStyle(lay);
+      hero.style.setProperty('--rule-left', (lr.left - hr.left) + 'px');
+      hero.style.setProperty('--rule-width', lr.width + 'px');
+      hero.style.setProperty('--rule-top', (lr.bottom - hr.top) + 'px');
+      hero.style.setProperty('--rule-color', lc.borderLeftColor);
+    }
+    // map the copy's text lines and buttons onto the grid, with a cell of margin
+    blocked = new Set();
+    const boxes = [];
+    hero.querySelectorAll('.hero-section__eyebrow-label, .hero-section__title--background .hero-section__title-main, .hero-section__title--background .hero-section__title-copy, .hero-section__meta, .hero-section__actions > *')
+      .forEach(el => { range.selectNodeContents(el); boxes.push(...range.getClientRects(), el.getBoundingClientRect()); });
+    const ox0 = r.left + ox(), oy0 = r.top + oy(), pad = cell * .75;
+    for (let c = 0; c < cols; c++) for (let rr = 0; rr < rows; rr++) {
+      const x = ox0 + c * cell, y = oy0 + rr * cell;
+      if (boxes.some(b => b.width && x > b.left - pad && x < b.right + pad && y > b.top - pad && y < b.bottom + pad)) blocked.add(c + ',' + rr);
+    }
+  };
+  const isBlocked = (c, r) => blocked.has(c + ',' + r);
+  const ox = () => (w - cols * cell) / 2 + cell / 2, oy = () => (h - rows * cell) / 2 + cell / 2;
+  const px = c => ox() + c * cell, py = r => oy() + r * cell;
+
+  const spawnFood = () => {
+    const free = [];
+    for (let c = 0; c < cols; c++) for (let r = 0; r < rows; r++) if (!isBlocked(c, r) && !snake.some(s => s[0] === c && s[1] === r)) free.push([c, r]);
+    food = free.length ? { at: free[Math.floor(Math.random() * free.length)], t: performance.now() } : null;
+  };
+  const setScore = () => {
+    scoreEl.textContent = best ? `${pts(score)} · best ${pts(best)}` : `${pts(score)}`;
+    nowEl.textContent = pts(score);
+    bestEl.textContent = pts(Math.max(best, score));      // a new best shows as it happens
+  };
+  // a finished game (crashed, or left mid-game) can set a new high score
+  const finish = () => {
+    if (score > best) best = score;
+    try { localStorage.setItem('snakeBest', best); } catch (e) {}
+    setScore();
+  };
+  const hint = text => { hintEl.textContent = text; };
+
+  const reset = (c, r) => {
+    c = Math.min(cols - 1, Math.max(0, c)); r = Math.min(rows - 1, Math.max(0, r));
+    dir = c > cols / 2 ? [-1, 0] : [1, 0]; queue = [];
+    snake = [[c, r]];                            // grows out to 4 over the first steps
+    score = 0; step = 110; acc = 0; setScore(); spawnFood();   // also refreshes the Best pill
+    state = 'ready';                             // waits for the first arrow key / swipe
+    hint(touch ? 'Swipe to start · × to exit' : 'Press an arrow key to start · Esc to exit');
+  };
+
+  const turn = d => {
+    if (state === 'ready') {
+      dir = d; queue = []; acc = 0; state = 'play';
+      hint(touch ? 'Swipe to steer · × to exit' : 'Arrow keys to steer · Esc to exit');
+      return;
+    }
+    const lastDir = queue.length ? queue[queue.length - 1] : dir;
+    if (d[0] === -lastDir[0] && d[1] === -lastDir[1]) return;   // no reversing into yourself
+    if (d[0] === lastDir[0] && d[1] === lastDir[1]) return;
+    if (queue.length < 3) queue.push(d);
+  };
+
+  const tick = () => {
+    if (queue.length) dir = queue.shift();
+    const head = snake[snake.length - 1], next = [(head[0] + dir[0] + cols) % cols, (head[1] + dir[1] + rows) % rows];   // edges wrap around
+    const grow = snake.length < 4 || (food && next[0] === food.at[0] && next[1] === food.at[1]);
+    const body = grow ? snake : snake.slice(1);
+    if (body.some(s => s[0] === next[0] && s[1] === next[1])) {   // only running into itself ends the game
+      state = 'over'; diedAt = performance.now();
+      finish();
+      hint(touch ? `Game over · tap anywhere to play again` : `Game over · click anywhere or press Space to play again · Esc to exit`);
+      return;
+    }
+    snake = body.concat([next]);
+    if (food && next[0] === food.at[0] && next[1] === food.at[1]) {
+      score++; setScore(); step = Math.max(70, step - 2); spawnFood();
+      nowEl.classList.remove('is-pop'); void nowEl.offsetWidth; nowEl.classList.add('is-pop');   // replay the pop
+    }
+  };
+
+  const dot = (x, y, r, color, a) => { if (!(r > 0)) return; ctx.globalAlpha = a; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); };
+  const draw = now => {
+    ctx.clearRect(0, 0, w, h);
+    const dark = document.documentElement.dataset.theme === 'dark';
+    const since = now - born;
+    // the faint grid ripples out from the click point
+    const reach = reduce.matches ? Infinity : since * 1.6;
+    const [cx, cy] = origin;
+    for (let c = 0; c < cols; c++) for (let r = 0; r < rows; r++) {
+      const x = px(c), y = py(r), d = Math.hypot(x - cx, y - cy);
+      if (d > reach) continue;
+      const fresh = Math.max(0, 1 - (reach - d) / 220);            // a brighter ring at the wavefront
+      dot(x, y, 1.3 + fresh * 1.6, dark ? '#7ea6ff' : BODY[0], (dark ? .28 : .22) + fresh * .45);
+    }
+    // food: an aqua dot that breathes
+    if (food) {
+      // rAF timestamps can trail performance.now(), so clamp the grow-in
+      const k = Math.min(1, Math.max(0, (now - food.t) / 260)), pulse = 1 + .08 * Math.sin(now / 240);
+      dot(px(food.at[0]), py(food.at[1]), 6.5 * k * pulse, FOOD, 1);
+    }
+    // snake: tail dots small and soft, growing to the head
+    // on game over the snake fades to grey and its eyes become two little crosses
+    const n = snake.length, dead = state === 'over' ? Math.min(1, Math.max(0, (now - diedAt) / 420)) : 0;
+    const GREY = dark ? '#5d636e' : '#a3abb7';
+    const seg = (x, y, r, color, a) => {
+      if (dead < 1) dot(x, y, r, color, a * (1 - dead));
+      if (dead > 0) dot(x, y, r, GREY, a * dead);
+    };
+    snake.forEach((s, i) => {
+      const t = n > 1 ? i / (n - 1) : 1;
+      const under = isBlocked(s[0], s[1]) ? .3 : 1;            // faint while it slips behind the copy
+      const r = (4 + t * 4.5) * (1 - dead) + (5.5 + t * 1.5) * dead;   // the dead snake's dots even out
+      seg(px(s[0]), py(s[1]), r, t > .5 ? BODY[1] : BODY[0], ((.55 + .45 * t) * (1 - dead) + dead) * under);
+    });
+    if (n) {
+      const [hc, hr] = snake[n - 1], x = px(hc), y = py(hr), hf = isBlocked(hc, hr) ? .3 : 1;
+      seg(x, y, state === 'ready' ? 10 + Math.sin(now / 220) : 10 - dead, BODY[1], hf);
+      const ex = dir[0] * 3, ey = dir[1] * 3, sx = -dir[1] * 3.2, sy = dir[0] * 3.2;
+      if (dead < 1) {
+        // two eyes, looking where it's going
+        dot(x + ex + sx, y + ey + sy, 1.6, dark ? '#0b0c0f' : '#061b31', hf * (1 - dead));
+        dot(x + ex - sx, y + ey - sy, 1.6, dark ? '#0b0c0f' : '#061b31', hf * (1 - dead));
+      }
+      if (dead > 0) {
+        ctx.globalAlpha = hf * dead; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+        for (const k of [1, -1]) {
+          const cx = x + ex * .4 + sx * k * 1.05, cy = y + ey * .4 + sy * k * 1.05, a = 1.9;
+          ctx.beginPath(); ctx.moveTo(cx - a, cy - a); ctx.lineTo(cx + a, cy + a); ctx.moveTo(cx + a, cy - a); ctx.lineTo(cx - a, cy + a); ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+  };
+
+  const loop = now => {
+    raf = 0;
+    if (!open) return;
+    const dt = Math.min(200, now - last); last = now;
+    // the intro ripple plays before the snake starts moving
+    if (state === 'play' && visible && now - born > 650) { acc += dt; while (acc >= step && state === 'play') { acc -= step; tick(); } }
+    draw(now);
+    raf = requestAnimationFrame(loop);
+  };
+
+  const enter = (x, y) => {
+    open = true;
+    box.classList.add('is-open');
+    hero.classList.add('is-snake');
+    place();
+    const br = box.querySelector('.snake__board').getBoundingClientRect();
+    origin = [x - br.left, y - br.top];
+    reset(Math.round((origin[0] - ox()) / cell), Math.round((origin[1] - oy()) / cell));
+    born = last = performance.now();
+    requestAnimationFrame(() => box.classList.add('is-in'));
+    box.focus({ preventScroll: true });
+    if (!raf) raf = requestAnimationFrame(loop);
+  };
+  const exit = () => {
+    if (!open) return;
+    if (state === 'play') finish();              // leaving mid-game still counts as a game
+    open = false; state = 'idle';
+    box.classList.remove('is-in');
+    hero.classList.remove('is-snake');
+    setTimeout(() => { if (!open) box.classList.remove('is-open'); }, reduce.matches ? 0 : 350);
+  };
+
+  hero.addEventListener('click', e => {
+    if (open) return;                            // restarts are handled page-wide, below
+    if (getSelection && String(getSelection())) return;           // finishing a text selection
+    if (onText(e.target, e.clientX, e.clientY)) return;
+    if (e.clientY > hero.getBoundingClientRect().bottom - 8) return;
+    enter(e.clientX, e.clientY);
+  });
+  box.querySelector('.snake__exit').addEventListener('click', e => { e.stopPropagation(); exit(); });
+  // once a game is over, a tap or click anywhere plays again (links and buttons keep working)
+  document.addEventListener('click', e => {
+    if (!open || state !== 'over' || e.target.closest('a, button, input')) return;
+    reset(Math.floor(cols / 2), Math.floor(rows / 2)); born = performance.now() - 650;
+  });
+
+  const KEYS = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0], W: [0, -1], S: [0, 1], A: [-1, 0], D: [1, 0] };
+  addEventListener('keydown', e => {
+    if (!open || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'Escape') { exit(); return; }
+    if (e.key === ' ' || e.key === 'Enter') {
+      if (e.target.closest && e.target.closest('button')) return;
+      e.preventDefault();
+      if (state === 'over') { reset(Math.floor(cols / 2), Math.floor(rows / 2)); born = performance.now() - 650; }
+      return;
+    }
+    const d = KEYS[e.key];
+    if (d) { e.preventDefault(); if (state === 'play' || state === 'ready') turn(d); }
+  });
+
+  // swipes on touch screens
+  let t0 = null;
+  box.addEventListener('touchstart', e => { const p = e.touches[0]; t0 = [p.clientX, p.clientY]; }, { passive: true });
+  box.addEventListener('touchmove', e => { if (open) e.preventDefault(); }, { passive: false });
+  box.addEventListener('touchend', e => {
+    if (!t0) return;
+    const p = e.changedTouches[0], dx = p.clientX - t0[0], dy = p.clientY - t0[1]; t0 = null;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 24 || (state !== 'play' && state !== 'ready')) return;
+    turn(Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)]);
+  });
+
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; }, { threshold: .35 }).observe(hero);
+  addEventListener('resize', () => { if (open) exit(); });
 })();
 </script>
 </body>
