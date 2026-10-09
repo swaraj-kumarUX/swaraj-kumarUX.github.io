@@ -508,18 +508,31 @@ h1{margin:0;font-weight:300}
   flex-wrap:wrap;
   gap:8px 20px;
 }
+/* "Why should you hire me?": the primary button's blue-to-teal gradient as
+   text, with a matching gradient underline; hover slides it towards teal */
 .hero-section__secondary-link{
+  --link-grad:linear-gradient(110deg,#2a55d6 0%,#1a6fd0 45%,#0b8a86 100%);
+  position:relative;
   font-size:var(--hds-font-text-md-size);
-  color:var(--hds-color-core-neutral-990);
-  text-decoration:underline;
-  text-decoration-color:transparent;
-  text-decoration-thickness:1.5px;
-  text-underline-offset:4px;
+  font-weight:500;
+  color:#1a6fd0;                       /* fallback without background-clip:text */
+  background-image:var(--link-grad);
+  background-size:170% 100%;background-position:0% 50%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-decoration:none;
   white-space:nowrap;
-  transition:text-decoration-color .2s ease,color .2s ease;
+  transition:background-position .6s cubic-bezier(.22,1,.36,1);
+}
+.hero-section__secondary-link::after{
+  content:"";position:absolute;left:0;right:0;bottom:-4px;height:1.5px;border-radius:1px;
+  background-image:var(--link-grad);background-size:170% 100%;background-position:inherit;
+  transition:height .2s ease;
 }
 .hero-section__secondary-link:hover,
-.hero-section__secondary-link:focus-visible{color:var(--hds-color-button-primary-bg);text-decoration-color:currentColor}
+.hero-section__secondary-link:focus-visible{background-position:100% 50%}
+.hero-section__secondary-link:hover::after,
+.hero-section__secondary-link:focus-visible::after{height:2px}
 
 /* "Currently Senior UX designer at redBus" */
 .hero-section__meta{
@@ -571,7 +584,8 @@ h1{margin:0;font-weight:300}
 /* the hover swell, carried below the hero: a fixed layer above section
    backgrounds and below their content */
 .cursor-dots{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-/* Get in touch cursor: a small white circle that inverts the text beneath it */
+/* text cursor: a white circle that inverts the text beneath it, anywhere on the page;
+   inside Get in touch it also trails the mouse as a small dot between texts */
 .contact-cursor{position:fixed;left:0;top:0;width:0;height:0;z-index:30;pointer-events:none}
 .contact-cursor__dot{position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;background:#fff;
   transform:scale(0);transition:transform .3s cubic-bezier(.22,1,.36,1)}
@@ -1082,6 +1096,10 @@ html.cs-locked{overflow:hidden}
 .xp__role{margin:0;font-size:var(--hds-font-heading-md-size);line-height:var(--hds-font-heading-md-lineHeight);letter-spacing:var(--hds-font-heading-md-letterSpacing);
   font-weight:300;color:var(--hds-color-heading-solid)}
 .xp__company{margin:-6px 0 0;font-size:16px;color:var(--hds-color-core-brand-600);font-weight:500}
+.xp__link{color:inherit;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;transition:text-decoration-color .2s}
+.xp__link:hover,.xp__link:focus-visible{text-decoration-color:currentColor}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.xp__link:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:2px}
 .xp__desc{margin:0;font-size:16px;line-height:1.5;color:#50617a;max-width:32ch}
 @media (prefers-reduced-motion:no-preference){
   .xp__now i{animation:expPulse 2.4s ease-out infinite}
@@ -1215,7 +1233,9 @@ html[data-theme="dark"] .navigation-mobile-panel{background:var(--dk-bg)}
 html[data-theme="dark"] .hero-section__title--foreground{display:none}
 html[data-theme="dark"] .hero-section__title{color:#a6adb8}
 html[data-theme="dark"] .hero-section__fullbleed-line{mix-blend-mode:normal}
-html[data-theme="dark"] .hero-section__eyebrow{mix-blend-mode:normal}   /* multiply turns light text black on the dark page */
+html[data-theme="dark"] .hero-section__eyebrow{mix-blend-mode:normal}
+/* lighter tints of the same blue/teal so the gradient link reads on near-black */
+html[data-theme="dark"] .hero-section__secondary-link{--link-grad:linear-gradient(110deg,#7ea6ff 0%,#5fb2ff 45%,#45d1c3 100%);color:#5fb2ff}   /* multiply turns light text black on the dark page */
 /* work cards */
 html[data-theme="dark"] .modular-solutions-bento-card__inner,
 html[data-theme="dark"] .work-card__art{background:var(--dk-surface)}
@@ -2284,21 +2304,21 @@ button{font-family:inherit}
         <div class="xp__head"><span class="xp__logo"><img src="work/logos/redbus.png" alt="redBus logo" loading="lazy"></span><span class="xp__now"><i></i>Current</span></div>
         <p class="xp__years">2024 &ndash; Present</p>
         <h3 class="xp__role">Senior UX Designer</h3>
-        <p class="xp__company">redBus</p>
+        <p class="xp__company"><a class="xp__link" href="https://www.redbus.in/" target="_blank" rel="noopener">redBus<span class="sr-only"> (opens in a new tab)</span></a></p>
         <p class="xp__desc">Designing high utility solutions for redBus backend systems</p>
       </li>
       <li class="xp" style="--i:1">
         <div class="xp__head"><span class="xp__logo"><img src="work/logos/unisys.png" alt="Unisys logo" loading="lazy"></span></div>
         <p class="xp__years">2022 &ndash; 2024</p>
         <h3 class="xp__role">Senior UI/UX Designer</h3>
-        <p class="xp__company">Unisys</p>
+        <p class="xp__company"><a class="xp__link" href="https://www.unisys.com/" target="_blank" rel="noopener">Unisys<span class="sr-only"> (opens in a new tab)</span></a></p>
         <p class="xp__desc">Crafted user experience for international SaaS products</p>
       </li>
       <li class="xp" style="--i:2">
         <div class="xp__head"><span class="xp__logo"><img src="work/logos/workik.png" alt="Workik logo" loading="lazy"></span></div>
         <p class="xp__years">2021 &ndash; 2022</p>
         <h3 class="xp__role">Product Designer</h3>
-        <p class="xp__company">Workik</p>
+        <p class="xp__company"><a class="xp__link" href="https://workik.com/" target="_blank" rel="noopener">Workik<span class="sr-only"> (opens in a new tab)</span></a></p>
         <p class="xp__desc">Led end to end design</p>
       </li>
     </ol>
@@ -5771,6 +5791,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
   const hero = wrap.closest('section') || document.body;
   hero.addEventListener('pointermove', e => {
     if (e.pointerType !== 'mouse') return;
+    if (window.overText && window.overText(e)) { mouse.tx = -1; start(); return; }   // text gets the invert cursor instead
     const r = canvas.getBoundingClientRect();
     mouse.tx = (e.clientX - r.left) * dpr; mouse.ty = (r.bottom - e.clientY) * dpr; start();
   });
@@ -5945,7 +5966,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
     m.cx = e.clientX; m.cy = e.clientY;
     m.tx = e.clientX; m.ty = e.clientY + scrollY;
     if (!m.has) { m.x = m.tx; m.y = m.ty; m.has = true; }
-    active = true; idle = 0; kick();
+    active = !(window.textNear && window.textNear(e.clientX, e.clientY)); idle = 0; kick();   // only in empty space, never behind text
   }, { passive: true });
   document.documentElement.addEventListener('pointerleave', () => { active = false; kick(); });
   addEventListener('scroll', () => { if (m.has) { m.ty = m.cy + scrollY; m.y = m.ty; idle = 0; } kick(); }, { passive: true });
@@ -5955,10 +5976,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
 </script>
 <script>
 /* =====================================================================
- * Get in touch cursor. A small white circle trails the mouse inside the
- * section; over its text (heading, contact names, descriptions, links) it
- * grows and switches to difference blending, so the text beneath it shows
- * inverted. Mouse only; the native cursor stays.
+ * Text cursor. Over text anywhere on the page, a white circle grows under
+ * the mouse with difference blending, so the text beneath it shows inverted
+ * and stays readable. The hero swell steps back meanwhile (window.overText),
+ * and the dot patch only draws where no text is near (window.textNear). Inside Get in touch the circle also trails the
+ * mouse as a small dot between texts. Mouse only; the native cursor stays.
  * ===================================================================== */
 (() => {
   if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
@@ -5970,7 +5992,28 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
   el.innerHTML = '<span class="contact-cursor__dot"></span>';
   document.body.appendChild(el);
 
-  const TEXT = '.stats-section__title, .stats-section__intro, .contact-tile, a, button';
+  // "over text" means over the glyph boxes of a text node, not the empty part
+  // of a wide paragraph; compact links and buttons count as a whole
+  const range = document.createRange();
+  const hits = (n, x, y) => {
+    range.selectNodeContents(n);
+    for (const r of range.getClientRects()) if (x >= r.left - 4 && x <= r.right + 4 && y >= r.top - 2 && y <= r.bottom + 2) return true;
+    return false;
+  };
+  window.overText = e => {
+    const t = e.target;
+    if (!t || !t.closest || t.closest('dialog')) return false;
+    const ctl = t.closest('a, button');
+    if (ctl && !ctl.classList.contains('work-card') && ctl.getBoundingClientRect().height <= 72) return true;
+    for (const n of t.childNodes) if (n.nodeType === 3 && n.textContent.trim() && hits(n, e.clientX, e.clientY)) return true;
+    return false;
+  };
+  // is any text inside the dot patch around (x, y)? samples a ring of points
+  const RING = [[0, 0]].concat([60, 120].flatMap(d => [0, 1, 2, 3, 4, 5, 6, 7].map(i => [d * Math.cos(i * Math.PI / 4), d * Math.sin(i * Math.PI / 4)])));
+  window.textNear = (x, y) => RING.some(([dx, dy]) => {
+    const px = x + dx, py = y + dy, t = document.elementFromPoint(px, py);
+    return !!t && window.overText({ target: t, clientX: px, clientY: py });
+  });
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   let x = 0, y = 0, tx = 0, ty = 0, raf = 0, seen = false;
 
@@ -5988,18 +6031,21 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
     tx = e.clientX; ty = e.clientY;
     const r = section.getBoundingClientRect();
     const inside = tx >= r.left && tx <= r.right && ty >= r.top && ty <= r.bottom;
-    if (inside && !seen) { x = tx; y = ty; place(); }      // appear under the cursor, not sliding in
-    seen = inside;
-    el.classList.toggle('is-on', inside);
-    el.classList.toggle('is-invert', inside && !!(e.target.closest && e.target.closest(TEXT) && section.contains(e.target)));
+    const text = window.overText(e) || (inside && !!e.target.closest('.contact-tile'));
+    const on = inside || text;
+    if (on && !seen) { x = tx; y = ty; place(); }      // appear under the cursor, not sliding in
+    seen = on;
+    el.classList.toggle('is-on', on);
+    el.classList.toggle('is-invert', text);
     if (!raf) raf = requestAnimationFrame(loop);
   }, { passive: true });
   // scrolling moves the section under a still cursor
   addEventListener('scroll', () => {
+    // content moves under a still cursor; drop the circle until the mouse moves again
     const r = section.getBoundingClientRect();
     const inside = seen = tx >= r.left && tx <= r.right && ty >= r.top && ty <= r.bottom;
     el.classList.toggle('is-on', inside);
-    if (!inside) el.classList.remove('is-invert');
+    el.classList.remove('is-invert');
   }, { passive: true });
   document.documentElement.addEventListener('pointerleave', () => { el.classList.remove('is-on', 'is-invert'); seen = false; });
 })();
