@@ -406,7 +406,7 @@ h1{margin:0;font-weight:300}
   mix-blend-mode:multiply;
   grid-column:1 / -1;
 }
-@media (min-width:940px){.hero-section__eyebrow{grid-column:2 / -2}}
+@media (min-width:940px){.hero-section__eyebrow{grid-column:1 / -2;padding-left:48px}}
 .hero-section__eyebrow-label{
   margin-right:var(--hds-space-core-25);
   color:var(--hds-color-core-neutral-990);
@@ -496,7 +496,7 @@ h1{margin:0;font-weight:300}
   grid-column:1 / -1;
   grid-row-start:2;
 }
-@media (min-width:940px){.hero-section__title-wrap{grid-column:2 / -2}}
+@media (min-width:940px){.hero-section__title-wrap{grid-column:1 / -2}.hero-section__title-wrap .hero-section__title{padding-left:48px}}   /* on both copies of the headline, so the overlay stays aligned */
 .hero-section__title-wrap .hero-section__title{grid-column:auto;grid-row-start:auto;max-width:32ch}
 
 .hero-section__actions{
@@ -545,7 +545,7 @@ h1{margin:0;font-weight:300}
   font-weight:var(--hds-font-weight-normal);
   color:var(--hds-color-core-neutral-500);
 }
-@media (min-width:940px){.hero-section__meta{grid-column:2 / -2}}
+@media (min-width:940px){.hero-section__meta{grid-column:1 / -2;padding-left:48px}}
 .hero-section__meta strong{
   font-weight:400;
   color:var(--hds-color-core-neutral-990);
@@ -560,7 +560,7 @@ h1{margin:0;font-weight:300}
   top:-0.05em;
 }
 @media (max-width:639px){.hero-section__actions{margin-top:var(--hds-space-core-100)}}
-@media (min-width:940px){.hero-section__actions{grid-column:2 / -2}}
+@media (min-width:940px){.hero-section__actions{grid-column:1 / -2;padding-left:48px}}
 
 
 /* ---------------------- hero: halftone "route" ribbon ------------------- */
@@ -615,6 +615,50 @@ html[data-theme="dark"] .snake__exit:hover,html[data-theme="dark"] .snake__exit:
 .snake__board{position:relative;flex:1;min-height:0}
 .snake__board canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hero-section__layout-grid{transition:opacity .45s ease,transform .6s cubic-bezier(.22,1,.36,1),filter .45s ease}
+
+/* ---------------------------------------------------------------------
+ * "About me" collage in the hero's empty right side: cut-out stickers
+ * (white outline) and framed prints, slightly overlapping, with tape
+ * labels. Each piece flips its tilt and springs forward on hover; they
+ * pop in one by one on load. Sizes are % of the box, so it scales.
+ * ------------------------------------------------------------------- */
+.hero-section__layout-grid{position:relative}
+.hero-section__layout-grid > .me-collage.me-collage{
+  position:absolute;z-index:2;right:0;top:-8px;width:clamp(260px,30vw,480px);aspect-ratio:380/470;
+  container-type:inline-size;pointer-events:none;transition:opacity .45s ease,visibility .45s}
+.me-collage__item{position:absolute;margin:0;pointer-events:auto;cursor:default;
+  left:var(--x);top:var(--y);width:var(--w);z-index:var(--z,1);
+  transform:rotate(var(--r,0deg));transform-origin:50% 60%;
+  transition:transform .55s cubic-bezier(.34,1.56,.64,1),filter .3s ease;
+  filter:drop-shadow(0 10px 14px rgba(13,25,60,.18)) drop-shadow(0 2px 3px rgba(13,25,60,.12))}
+.me-collage__item img{display:block;width:100%;height:auto;-webkit-user-drag:none;user-select:none}
+/* framed prints: a white border like the tiger photo in the reference */
+.me-collage__item--frame img{border:max(4px,1.6cqw) solid #fff;border-radius:3px;box-sizing:border-box}
+/* hover: flip the tilt the other way, lift and come forward */
+.me-collage__item:hover{z-index:20;transform:translateY(-6px) rotate(var(--rh,0deg)) scale(1.05);
+  filter:drop-shadow(0 18px 22px rgba(13,25,60,.24)) drop-shadow(0 3px 5px rgba(13,25,60,.14))}
+.me-collage__tape{position:absolute;z-index:15;left:var(--x);top:var(--y);transform:rotate(var(--r));
+  padding:.35em .7em;font-size:max(10px,3.1cqw);line-height:1.2;font-weight:500;letter-spacing:.01em;white-space:nowrap;color:#2a3342;
+  background:rgba(255,255,255,.92);box-shadow:0 2px 6px rgba(13,25,60,.16);pointer-events:none}
+/* a quiet caption under the collage, with a small arrow curving up into it */
+.me-collage__note{position:absolute;left:0;right:0;top:calc(100% + 2px);display:flex;align-items:flex-end;justify-content:center;gap:6px;
+  margin:0;font-size:max(13px,3.5cqw);line-height:1.2;color:#64748d;letter-spacing:.01em;pointer-events:none}
+.me-collage__note svg{width:max(22px,6cqw);height:auto;flex:none;color:#94a3b8;transform:translateY(-.35em)}
+html[data-theme="dark"] .me-collage__note{color:#a6adb8}
+html[data-theme="dark"] .me-collage__note svg{color:#6b7280}
+/* pop in, one after another */
+@media (prefers-reduced-motion:no-preference){
+  .me-collage__item,.me-collage__tape,.me-collage__note{animation:collageIn .7s cubic-bezier(.34,1.56,.64,1) both;animation-delay:calc(.25s + var(--i,0) * 90ms)}
+  @keyframes collageIn{from{opacity:0;translate:0 14px;scale:.85}}
+}
+@media (prefers-reduced-motion:reduce){.me-collage__item{transition:none}}
+html[data-theme="dark"] .me-collage__item{filter:drop-shadow(0 10px 16px rgba(0,0,0,.45))}
+html[data-theme="dark"] .me-collage__item:hover{filter:drop-shadow(0 18px 24px rgba(0,0,0,.55))}
+/* only where the right side has room for it (the script sizes it to the free space) */
+@media (max-width:1099px){.hero-section__layout-grid > .me-collage.me-collage{display:none}}
+.hero-section__layout-grid > .me-collage.me-collage.is-cramped{display:none}
+/* the game needs the space: the collage steps aside */
+.is-snake .hero-section__layout-grid > .me-collage.me-collage{opacity:0;visibility:hidden}
 /* the ribbon keeps flowing, lighter, so the snake reads on top of it */
 .hero-gradient{transition:opacity .6s ease}
 .is-snake .hero-gradient{opacity:.35}
@@ -2208,6 +2252,20 @@ button{font-family:inherit}
 
       <p class="hero-section__meta">Currently <strong>Senior UX designer</strong> at <img class="hero-section__meta-logo" alt="redBus" width="245" height="163" src="data:image/png;base64,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"></p>
 
+      <!-- a few things about me, collage-style -->
+      <div class="me-collage" role="img" aria-label="Collage: Swaraj at Mehrangarh Fort in Jodhpur, the fort itself, a foggy hilltop hike, motorcycle rides, and two thalis">
+        <figure class="me-collage__item" style="--x:0%;--y:5%;--w:50%;--r:-3deg;--rh:2deg;--z:1;--i:0"><img src="work/me/fort.webp" alt="" width="488" height="571" decoding="async"></figure>
+        <figure class="me-collage__item me-collage__item--frame" style="--x:40%;--y:0%;--w:37%;--r:5deg;--rh:-3deg;--z:2;--i:1"><img src="work/me/fog.webp" alt="" width="360" height="450" decoding="async"></figure>
+        <figure class="me-collage__item me-collage__item--frame" style="--x:4%;--y:45%;--w:33%;--r:-6deg;--rh:3deg;--z:3;--i:2"><img src="work/me/ride-pov.webp" alt="" width="340" height="420" decoding="async"></figure>
+        <figure class="me-collage__item" style="--x:62%;--y:13%;--w:33%;--r:2deg;--rh:-3deg;--z:6;--i:3"><img src="work/me/me.webp" alt="" width="328" height="609" decoding="async"></figure>
+        <figure class="me-collage__item" style="--x:31%;--y:57%;--w:45%;--r:3deg;--rh:-4deg;--z:5;--i:4"><img src="work/me/rider.webp" alt="" width="408" height="318" decoding="async"></figure>
+        <figure class="me-collage__item" style="--x:70%;--y:66%;--w:32%;--r:8deg;--rh:-5deg;--z:4;--i:5"><img src="work/me/thali-rajasthani.webp" alt="" width="326" height="272" decoding="async"></figure>
+        <figure class="me-collage__item" style="--x:-2%;--y:79%;--w:31%;--r:-8deg;--rh:5deg;--z:4;--i:6"><img src="work/me/thali-goan.webp" alt="" width="326" height="251" decoding="async"></figure>
+        <span class="me-collage__tape" style="--x:30%;--y:55%;--r:-5deg;--i:7">weekend rider</span>
+        <span class="me-collage__tape" style="--x:60%;--y:90%;--r:3deg;--i:8">will travel for thali</span>
+        <p class="me-collage__note" style="--i:9"><svg viewBox="0 0 28 24" fill="none" aria-hidden="true"><path d="M3 21c7-1 13-6 15-15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13.5 8.5 18 4.5l3 5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>a little bit about me</p>
+      </div>
+
       <div class="hds-button-group hero-section__actions">
         <a class="hds-button hds-button--primary" href="assets/Swaraj-Kumar-Resume.pdf" target="_blank" rel="noopener">Download resume<span class="hds-nowrap-svg"><svg class="hds-icon hds-icon-hover-arrow" width="5" height="8" fill="none" viewBox="0 0.5 5 8"><defs><clipPath id="arrowClipHero"><rect x="0" y="0" width="12" height="9"></rect></clipPath></defs><g clip-path="url(#arrowClipHero)"><g class="arrow-group"><rect class="shaft" x="-10" y="3.375" width="13" height="1.75" fill="currentColor"></rect><path d="M4.84766 3.63379L5.45898 4.25L4.84766 4.86621L1.24219 8.49902L0 7.2666L2.99316 4.24902L0 1.23242L1.24219 0L4.84766 3.63379Z" fill="currentColor"></path></g></g></svg></span></a>
         <a class="hero-section__secondary-link" href="#why-hire-me" data-video-open aria-haspopup="dialog">Why should you hire me?</a>
@@ -2579,8 +2637,8 @@ button{font-family:inherit}
           <article class="cs-card">
             <div class="cs-card__graphic cs-card__graphic--flow">
               <div class="cs-flowpair">
-                <figure><figcaption>Before &middot; two manual uploads</figcaption><img class="" src="work/ota/existing-flow.png" alt="The existing Ticketsimply reconciliation flow, annotated" loading="lazy" decoding="async"></figure>
-                <figure><figcaption>After &middot; auto-sync from redPro</figcaption><img class="" src="work/ota/new-flow.png" alt="The redesigned auto-reconciliation user flow" loading="lazy" decoding="async"></figure>
+                <figure><figcaption>Before &middot; two manual uploads</figcaption><img class="" src="work/ota/existing-flow.png" alt="The existing Ticketsimply reconciliation flow, annotated" decoding="async"></figure>
+                <figure><figcaption>After &middot; auto-sync from redPro</figcaption><img class="" src="work/ota/new-flow.png" alt="The redesigned auto-reconciliation user flow" decoding="async"></figure>
               </div>
             </div>
             <p class="cs-card__step">02 &middot; Redesign</p>
@@ -2589,8 +2647,8 @@ button{font-family:inherit}
           </article>
           <article class="cs-card">
             <div class="cs-card__graphic cs-card__graphic--test">
-              <figure class="cs-ab cs-ab--v2"><figcaption>V2 &middot; accordions only</figcaption><img class="" src="work/ota/v2.png" alt="V2: accordions only, no chart breakup" loading="lazy" decoding="async"></figure>
-              <figure class="cs-ab cs-ab--v1"><figcaption><b>&#10003; Selected</b> V1 &middot; charts + accordions</figcaption><img class="" src="work/reconciliation-report.png" alt="V1: donut-chart breakup plus accordions" loading="lazy" decoding="async"></figure>
+              <figure class="cs-ab cs-ab--v2"><figcaption>V2 &middot; accordions only</figcaption><img class="" src="work/ota/v2.png" alt="V2: accordions only, no chart breakup" decoding="async"></figure>
+              <figure class="cs-ab cs-ab--v1"><figcaption><b>&#10003; Selected</b> V1 &middot; charts + accordions</figcaption><img class="" src="work/reconciliation-report.png" alt="V1: donut-chart breakup plus accordions" decoding="async"></figure>
             </div>
             <p class="cs-card__step">03 &middot; Testing</p>
             <h4 class="cs-card__title">Two real layouts, tested head-to-head</h4>
@@ -6578,6 +6636,36 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
 
   new IntersectionObserver(es => { visible = es[0].isIntersecting; }, { threshold: .35 }).observe(hero);
   addEventListener('resize', () => { if (open) exit(); });
+})();
+</script>
+<script>
+/* =====================================================================
+ * Hero collage: fit it to the free space right of the copy. The headline
+ * scales with the window's height, so measure its text instead of
+ * guessing breakpoints: up to 480px wide, 32px clear of the text, and
+ * hidden when there's less than 240px to work with.
+ * ===================================================================== */
+(() => {
+  const col = document.querySelector('.me-collage');
+  const grid = col && col.closest('.hero-section__layout-grid');
+  if (!grid) return;
+  const range = document.createRange();
+  const TEXT = '.hero-section__eyebrow-label, .hero-section__title--background .hero-section__title-main, .hero-section__title--background .hero-section__title-copy, .hero-section__meta, .hero-section__actions > *';
+  const fit = () => {
+    let right = 0;
+    grid.querySelectorAll(TEXT).forEach(el => {
+      range.selectNodeContents(el);
+      for (const r of range.getClientRects()) right = Math.max(right, r.right);
+    });
+    const room = grid.getBoundingClientRect().right - right - 32;
+    const w = Math.min(480, room);
+    col.classList.toggle('is-cramped', w < 240);
+    col.style.width = Math.max(240, w) + 'px';
+  };
+  new ResizeObserver(fit).observe(grid);
+  addEventListener('resize', fit);                // the headline also scales with the window's height
+  if (document.fonts) document.fonts.ready.then(fit);
+  fit();
 })();
 </script>
 </body>
